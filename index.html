@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tattoo Conv.">
+<title>Tattoo Convention</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#fff;--bg2:#f5f5f7;--bg3:#ebebf0;
+  --text:#1a1a1a;--text2:#6e6e73;--text3:#aeaeb2;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+  --teal-l:#E1F5EE;--teal-d:#085041;
+  --amber-l:#FAEEDA;--amber-d:#633806;
+  --blue-l:#E6F1FB;--blue-d:#0C447C;
+  --green-l:#EAF3DE;--green-d:#27500A;
+  --red:#E24B4A;--green:#3B6D11;
+  --r:10px;--rl:14px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+  --text:#f2f2f7;--text2:#aeaeb2;--text3:#636366;
+  --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.22);
+  --purple-l:#2d2a5e;--purple-d:#afa9ec;
+  --teal-l:#1a3a30;--teal-d:#9fe1cb;
+  --amber-l:#3a2a0a;--amber-d:#FAC775;
+  --blue-l:#0a1e30;--blue-d:#85B7EB;
+  --green-l:#162208;--green-d:#C0DD97;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;overflow-x:hidden}
+/* TOPBAR */
+.topbar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:env(safe-area-inset-top,14px) 16px 10px;position:sticky;top:0;z-index:50}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.app-title{font-size:18px;font-weight:700;letter-spacing:-0.3px;white-space:nowrap}
+.topbar-actions{display:flex;gap:6px}
+.btn-sm{font-size:12px;padding:6px 10px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
+.tabs{display:flex;gap:5px}
+.tab{flex:1;padding:7px 2px;border:0.5px solid var(--border);border-radius:var(--r);font-size:11px;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap}
+.tab.active{background:var(--bg2);color:var(--text);border-color:var(--border2);font-weight:600}
+.cnt{background:var(--purple);color:#fff;border-radius:20px;font-size:10px;padding:1px 5px;font-weight:700}
+/* SEARCH */
+.search-wrap{padding:10px 16px;background:var(--bg);border-bottom:0.5px solid var(--border)}
+.search-wrap input{width:100%;padding:9px 14px;font-size:15px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);color:var(--text)}
+/* LIST */
+.list{padding:12px 16px;display:flex;flex-direction:column;gap:10px;padding-bottom:90px}
+/* CARDS */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;cursor:pointer;transition:transform .1s}
+.card:active{transform:scale(0.97)}
+.card-head{display:flex;align-items:center;gap:12px}
+.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.av-a{background:var(--purple-l);color:var(--purple-d)}
+.av-s{background:var(--teal-l);color:var(--teal-d)}
+.card-name{font-size:16px;font-weight:600}
+.card-sub{font-size:13px;color:var(--text2);margin-top:2px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500}
+.b-purple{background:var(--purple-l);color:var(--purple-d)}
+.b-teal{background:var(--teal-l);color:var(--teal-d)}
+.b-amber{background:var(--amber-l);color:var(--amber-d)}
+.b-blue{background:var(--blue-l);color:var(--blue-d)}
+.b-green{background:var(--green-l);color:var(--green-d)}
+.b-gray{background:var(--bg2);color:var(--text3)}
+/* EVENT CARDS */
+.ev-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);cursor:pointer;overflow:hidden;transition:transform .1s}
+.ev-card:active{transform:scale(0.97)}
+.ev-stripe{height:5px}
+.ev-stripe.upcoming{background:var(--purple)}
+.ev-stripe.today{background:var(--red)}
+.ev-stripe.past{background:var(--text3)}
+.ev-body{padding:14px}
+.ev-time{font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.ev-title{font-size:16px;font-weight:600;margin-bottom:6px}
+/* FAB */
+.fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:20px;width:56px;height:56px;border-radius:50%;background:var(--purple);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100}
+.fab:active{transform:scale(0.93)}
+/* OVERLAY / SHEET */
+.overlay{display:none;position:fixed;inset:0;z-index:200}
+.overlay.show{display:flex;align-items:flex-end}
+.ov-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5)}
+.sheet{position:relative;background:var(--bg);border-radius:20px 20px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));width:100%;max-height:93vh;overflow-y:auto;z-index:1}
+.handle{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 16px}
+.sheet h2{font-size:18px;font-weight:700;margin-bottom:16px}
+.lbl{font-size:13px;color:var(--text2);display:block;margin-bottom:5px;margin-top:14px}
+.sheet input,.sheet select,.sheet textarea{width:100%;padding:10px 14px;font-size:15px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);appearance:none;font-family:inherit}
+.sheet textarea{resize:vertical;min-height:80px}
+/* BUTTONS */
+.row-btns{display:flex;gap:8px;margin-top:20px}
+.btn-cancel{flex:1;padding:13px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;font-size:15px;color:var(--text2);cursor:pointer;font-weight:500}
+.btn-save{flex:2;padding:13px;border:none;border-radius:var(--r);background:var(--purple);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.btn-full{width:100%;padding:13px;border-radius:var(--r);font-size:15px;cursor:pointer;font-weight:500;margin-top:8px;font-family:inherit}
+.btn-edit{background:var(--purple);color:#fff;border:none}
+.btn-del{background:transparent;color:var(--red);border:0.5px solid var(--red)}
+.btn-close{background:transparent;color:var(--text2);border:0.5px solid var(--border2)}
+/* TYPE TOGGLE */
+.type-toggle{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.ttype{padding:7px 12px;border:0.5px solid var(--border);border-radius:var(--r);font-size:13px;background:transparent;color:var(--text2);cursor:pointer;font-weight:500}
+.ttype.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+/* DETAIL FIELDS */
+.dm-field{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:0.5px solid var(--border);font-size:14px;gap:12px}
+.dm-field:last-of-type{border:none}
+.dm-key{color:var(--text2);flex-shrink:0}
+.dm-val{font-weight:500;text-align:right;word-break:break-word}
+/* PHOTO */
+.photo-picker{display:flex;align-items:center;gap:12px;margin-top:10px}
+.photo-prev{width:64px;height:64px;border-radius:50%;border:0.5px solid var(--border);object-fit:cover}
+.photo-ph{width:64px;height:64px;border-radius:50%;border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:22px;flex-shrink:0}
+.photo-actions{display:flex;flex-direction:column;gap:6px}
+.btn-photo{padding:7px 14px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--text);font-weight:500;font-family:inherit}
+.detail-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:14px;overflow:hidden}
+.detail-avatar img{width:100%;height:100%;object-fit:cover}
+/* REMINDERS */
+.reminder-box{background:var(--bg2);border-radius:var(--r);padding:14px;margin-top:14px}
+.reminder-box h3{font-size:14px;font-weight:600;margin-bottom:10px}
+.rem-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border)}
+.rem-row:last-of-type{border:none}
+.rem-row select{flex:1;padding:7px 10px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);font-family:inherit}
+.rem-del{background:transparent;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:0 2px;line-height:1}
+.btn-add-rem{width:100%;margin-top:10px;padding:10px;border:1.5px dashed var(--border2);border-radius:var(--r);background:transparent;font-size:14px;color:var(--purple);cursor:pointer;font-weight:600;font-family:inherit}
+/* NOTIF BANNER */
+.notif-banner{background:var(--amber-l);border-radius:var(--r);padding:12px 14px;margin-top:12px;font-size:13px;color:var(--amber-d);line-height:1.5}
+.tip-box{background:var(--purple-l);border-radius:var(--r);padding:12px 14px;margin-top:14px;font-size:13px;color:var(--purple-d);line-height:1.5}
+/* IMPORT */
+.import-zone{border:1.5px dashed var(--border2);border-radius:var(--rl);padding:24px 16px;text-align:center;cursor:pointer;margin:14px 0}
+.import-zone:active{background:var(--bg2)}
+.import-zone .iz-icon{font-size:36px}
+.import-zone p{font-size:14px;color:var(--text2);margin-top:8px;line-height:1.5}
+.import-preview{background:var(--bg2);border-radius:var(--r);padding:12px;margin-bottom:12px;max-height:180px;overflow:auto}
+.import-preview table{width:100%;font-size:12px;border-collapse:collapse;min-width:340px}
+.import-preview th{color:var(--text2);font-weight:600;padding:4px 8px;border-bottom:0.5px solid var(--border);text-align:left;white-space:nowrap}
+.import-preview td{padding:4px 8px;border-bottom:0.5px solid var(--border);color:var(--text)}
+.status-ok{color:var(--green);font-size:13px;font-weight:600}
+.status-err{color:var(--red);font-size:13px;font-weight:600}
+.tmpl-link{font-size:13px;color:var(--purple);cursor:pointer;text-decoration:underline;display:inline-block;margin-top:4px}
+/* BACKUP */
+.backup-row{display:flex;gap:8px;margin-top:14px}
+.btn-backup{flex:1;padding:11px;border-radius:var(--r);font-size:14px;cursor:pointer;font-weight:500;font-family:inherit}
+.btn-export{background:var(--green-l);color:var(--green-d);border:0.5px solid var(--green-d)}
+.btn-import-bk{background:var(--blue-l);color:var(--blue-d);border:0.5px solid var(--blue-d)}
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--text2);font-size:15px;line-height:1.7}
+.empty-icon{font-size:48px;display:block;margin-bottom:10px}
+/* TOAST */
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <span class="app-title">🖋 Tattoo Convention</span>
+    <div class="topbar-actions">
+      <button class="btn-sm" onclick="openImport()">📥 Import</button>
+      <button class="btn-sm" onclick="openBackup()">💾 Données</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" id="tab-a" onclick="switchTab('artists')">🎨 Artistes <span class="cnt" id="cnt-a">0</span></button>
+    <button class="tab" id="tab-s" onclick="switchTab('shops')">🏪 Boutiques <span class="cnt" id="cnt-s">0</span></button>
+    <button class="tab" id="tab-e" onclick="switchTab('events')">📅 Événements <span class="cnt" id="cnt-e">0</span></button>
+  </div>
+</div>
+
+<div class="search-wrap" id="search-wrap">
+  <input type="search" id="search" placeholder="🔍  Rechercher…" oninput="render()">
+</div>
+
+<div class="list" id="list"></div>
+<button class="fab" onclick="openAdd()">＋</button>
+<div class="toast" id="toast"></div>
+
+<!-- ===== FICHE ADD/EDIT ===== -->
+<div class="overlay" id="ov-add">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <h2 id="modal-title">Nouvelle fiche</h2>
+    <div class="type-toggle">
+      <button class="ttype on" id="tt-a" onclick="setFT('artist')">🎨 Artiste</button>
+      <button class="ttype" id="tt-s" onclick="setFT('shop')">🏪 Boutique</button>
+      <button class="ttype" id="tt-e" onclick="setFT('event')">📅 Événement</button>
+    </div>
+
+    <!-- ARTISTE -->
+    <div id="artist-fields">
+      <span class="lbl">Photo</span>
+      <div class="photo-picker">
+        <div class="photo-ph" id="f-ph">📷</div>
+        <img id="f-prev" class="photo-prev" style="display:none" alt="">
+        <div class="photo-actions">
+          <label class="btn-photo" for="f-file">📷 Choisir</label>
+          <input type="file" id="f-file" accept="image/*" style="display:none" onchange="handlePhoto(this,'f')">
+          <input type="hidden" id="f-photo">
+          <button class="btn-photo" id="f-del" style="display:none;color:var(--red)" onclick="clearPhoto('f')">✕ Retirer</button>
+        </div>
+      </div>
+      <span class="lbl">Nom complet *</span><input id="f-name" placeholder="ex : Alex Moreau">
+      <span class="lbl">Style(s) de tatouage</span><input id="f-style" placeholder="ex : Blackwork, Fineline, Japanese">
+      <span class="lbl">Nationalité</span><input id="f-nat" placeholder="ex : Français, Japonais">
+      <span class="lbl">Emplacement dans l'événement</span><input id="f-loc" placeholder="ex : Hall A – Stand 12">
+      <span class="lbl">Boutique / Studio</span><input id="f-shop" placeholder="ex : Dark Ink Studio">
+      <span class="lbl">Instagram / Contact</span><input id="f-insta" placeholder="ex : @artiste_tattoo">
+      <span class="lbl">Notes</span><textarea id="f-notes" placeholder="Prix session, disponibilités, anecdotes…"></textarea>
+    </div>
+
+    <!-- BOUTIQUE -->
+    <div id="shop-fields" style="display:none">
+      <span class="lbl">Photo / Logo</span>
+      <div class="photo-picker">
+        <div class="photo-ph" id="s-ph">📷</div>
+        <img id="s-prev" class="photo-prev" style="display:none" alt="">
+        <div class="photo-actions">
+          <label class="btn-photo" for="s-file">📷 Choisir</label>
+          <input type="file" id="s-file" accept="image/*" style="display:none" onchange="handlePhoto(this,'s')">
+          <input type="hidden" id="s-photo">
+          <button class="btn-photo" id="s-del" style="display:none;color:var(--red)" onclick="clearPhoto('s')">✕ Retirer</button>
+        </div>
+      </div>
+      <span class="lbl">Nom de la boutique *</span><input id="s-name" placeholder="ex : Dark Ink Studio">
+      <span class="lbl">Ville / Pays</span><input id="s-city" placeholder="ex : Paris, France">
+      <span class="lbl">Emplacement dans l'événement</span><input id="s-loc" placeholder="ex : Hall B – Stand 5">
+      <span class="lbl">Spécialités</span><input id="s-spec" placeholder="ex : Blackwork, Neo-trad…">
+      <span class="lbl">Site / Instagram</span><input id="s-contact" placeholder="ex : @boutique_tattoo">
+      <span class="lbl">Notes</span><textarea id="s-notes" placeholder="Produits, infos, collaborations…"></textarea>
+    </div>
+
+    <!-- ÉVÉNEMENT -->
+    <div id="event-fields" style="display:none">
+      <span class="lbl">Titre *</span><input id="e-title" placeholder="ex : Démonstration live – Alex Moreau">
+      <span class="lbl">Catégorie</span>
+      <select id="e-cat">
+        <option value="🎤 Démonstration">🎤 Démonstration / Performance</option>
+        <option value="🏆 Concours">🏆 Concours</option>
+        <option value="🎙 Conférence">🎙 Conférence / Talk</option>
+        <option value="🤝 Meet & Greet">🤝 Meet &amp; Greet</option>
+        <option value="🎉 Cérémonie">🎉 Cérémonie</option>
+        <option value="📸 Session photo">📸 Session photo</option>
+        <option value="⏰ Rappel perso">⏰ Rappel personnel</option>
+        <option value="🗓 Autre">🗓 Autre</option>
+      </select>
+      <span class="lbl">Date et heure de début</span><input type="datetime-local" id="e-start">
+      <span class="lbl">Date et heure de fin</span><input type="datetime-local" id="e-end">
+      <span class="lbl">Lieu / Scène / Stand</span><input id="e-loc" placeholder="ex : Scène principale, Hall A">
+      <span class="lbl">Artiste / Intervenant</span><input id="e-artist" placeholder="ex : Alex Moreau">
+      <span class="lbl">Notes</span><textarea id="e-notes" placeholder="Détails, règles, infos pratiques…"></textarea>
+
+      <div class="reminder-box">
+        <h3>⏰ Rappels</h3>
+        <div id="rem-form-list"></div>
+        <button class="btn-add-rem" onclick="addRemRow()">＋ Ajouter un rappel</button>
+        <div id="rem-banner" class="notif-banner" style="display:none">
+          ⚠️ Pour recevoir les rappels, autorise les notifications quand Safari te le demande. L'app doit être ajoutée à l'écran d'accueil et ouverte en arrière-plan.
+        </div>
+      </div>
+    </div>
+
+    <div class="row-btns">
+      <button class="btn-cancel" onclick="closeAll()">Annuler</button>
+      <button class="btn-save" onclick="saveEntry()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DETAIL ===== -->
+<div class="overlay" id="ov-detail">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet" id="detail-content"></div>
+</div>
+
+<!-- ===== IMPORT ===== -->
+<div class="overlay" id="ov-import">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <h2>📥 Import Excel / CSV</h2>
+    <span class="tmpl-link" onclick="dlTemplate()">⬇️ Télécharger le modèle Excel</span>
+    <span class="lbl" style="margin-top:14px">Type de données</span>
+    <div class="type-toggle">
+      <button class="ttype on" id="it-a" onclick="setIT('artist')">🎨 Artistes</button>
+      <button class="ttype" id="it-s" onclick="setIT('shop')">🏪 Boutiques</button>
+      <button class="ttype" id="it-e" onclick="setIT('event')">📅 Événements</button>
+    </div>
+    <div class="import-zone" onclick="document.getElementById('xl-file').click()">
+      <div class="iz-icon">📊</div>
+      <p>Appuie ici pour choisir un fichier<br><strong>.xlsx</strong> ou <strong>.csv</strong></p>
+      <input type="file" id="xl-file" accept=".xlsx,.csv,.xls" style="display:none" onchange="loadXL(this)">
+    </div>
+    <div id="import-info" style="display:none">
+      <div id="import-preview" class="import-preview"></div>
+      <p id="import-status"></p>
+    </div>
+    <div class="tip-box">💡 Télécharge d'abord le modèle, remplis-le sur ordinateur, puis importe-le ici. Les colonnes doivent correspondre exactement.</div>
+    <div class="row-btns">
+      <button class="btn-cancel" onclick="closeAll()">Annuler</button>
+      <button class="btn-save" id="btn-import" style="display:none" onclick="doImport()">✓ Importer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BACKUP ===== -->
+<div class="overlay" id="ov-backup">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <h2>💾 Sauvegarde des données</h2>
+    <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:4px">Exporte toutes tes données pour les sauvegarder ou les transférer sur un autre appareil. En cas de mise à jour de l'app, importe ton fichier de sauvegarde pour retrouver toutes tes fiches.</p>
+    <div class="backup-row">
+      <button class="btn-backup btn-export" onclick="exportBackup()">⬇️ Exporter mes données</button>
+      <label class="btn-backup btn-import-bk" for="bk-file" style="display:flex;align-items:center;justify-content:center;cursor:pointer">
+        ⬆️ Importer une sauvegarde
+      </label>
+      <input type="file" id="bk-file" accept=".json" style="display:none" onchange="importBackup(this)">
+    </div>
+    <div class="tip-box" style="margin-top:14px">
+      💡 <strong>Conseil :</strong> exporte une sauvegarde avant chaque mise à jour de l'app. Le fichier .json contient artistes, boutiques et événements.
+    </div>
+    <div id="bk-stats" style="margin-top:14px;font-size:13px;color:var(--text2)"></div>
+    <button class="btn-full btn-close" onclick="closeAll()" style="margin-top:16px">Fermer</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+const STORE = 'tattoo-v3';
+let data = { artists:[], shops:[], events:[] };
+let tab = 'artists', formType = 'artist', importType = 'artist';
+let editId = null, importRows = [], remRows = [];
+let notifTimers = [];
+
+// ── PERSIST ────────────────────────────────────────────────────
+function loadData() {
+  try { const d = localStorage.getItem(STORE); if (d) data = JSON.parse(d); } catch(e){}
+  if (!data.events) data.events = [];
+  rescheduleAll();
+  render();
+}
+function saveData() {
+  try { localStorage.setItem(STORE, JSON.stringify(data)); } catch(e){ toast('❌ Erreur de sauvegarde'); }
+}
+
+// ── UTILS ──────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+function initials(n) {
+  return (n||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function fmtDatetime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})
+       + ' · ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+function isPast(iso) { return iso && new Date(iso) < new Date(); }
+function isToday(iso) {
+  if (!iso) return false;
+  const d = new Date(iso), n = new Date();
+  return d.toDateString() === n.toDateString();
+}
+
+// ── TABS ───────────────────────────────────────────────────────
+function switchTab(t) {
+  tab = t;
+  ['a','s','e'].forEach(x => document.getElementById('tab-'+x).classList.remove('active'));
+  document.getElementById('tab-' + {artists:'a',shops:'s',events:'e'}[t]).classList.add('active');
+  document.getElementById('search-wrap').style.display = t === 'events' ? 'none' : 'block';
+  render();
+}
+
+// ── RENDER ─────────────────────────────────────────────────────
+function render() {
+  document.getElementById('cnt-a').textContent = data.artists.length;
+  document.getElementById('cnt-s').textContent = data.shops.length;
+  document.getElementById('cnt-e').textContent = data.events.length;
+
+  const q = (document.getElementById('search').value || '').toLowerCase();
+  const list = document.getElementById('list');
+
+  if (tab === 'events') {
+    const sorted = [...data.events].sort((a,b) => new Date(a.start||0) - new Date(b.start||0));
+    if (!sorted.length) {
+      list.innerHTML = `<div class="empty"><span class="empty-icon">📅</span>Aucun événement.<br>Appuie sur <strong>＋</strong> pour en créer un.</div>`;
+      return;
+    }
+    list.innerHTML = sorted.map(x => {
+      const past = isPast(x.end || x.start);
+      const today = isToday(x.start);
+      const sc = past ? 'past' : today ? 'today' : 'upcoming';
+      const rc = (x.reminders||[]).length;
+      return `<div class="ev-card" onclick="openDetail('${x.id}')">
+        <div class="ev-stripe ${sc}"></div>
+        <div class="ev-body">
+          <div class="ev-time">${x.start ? fmtDatetime(x.start) : 'Pas de date'}</div>
+          <div class="ev-title">${x.title||'—'}</div>
+          <div class="badges">
+            ${x.cat ? `<span class="badge b-purple">${x.cat}</span>` : ''}
+            ${x.loc ? `<span class="badge b-amber">📍 ${x.loc}</span>` : ''}
+            ${x.artist ? `<span class="badge b-teal">🎨 ${x.artist}</span>` : ''}
+            ${rc ? `<span class="badge b-green">⏰ ${rc} rappel${rc>1?'s':''}</span>` : ''}
+            ${past ? `<span class="badge b-gray">Terminé</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  const items = data[tab === 'artists' ? 'artists' : 'shops'].filter(x =>
+    JSON.stringify(x).toLowerCase().includes(q)
+  );
+  if (!items.length) {
+    list.innerHTML = `<div class="empty"><span class="empty-icon">👻</span>Aucun résultat.<br>Appuie sur <strong>＋</strong> pour ajouter<br>ou utilise Import Excel.</div>`;
+    return;
+  }
+  list.innerHTML = items.map(x => {
+    const av = x.photo
+      ? `<div class="avatar"><img src="${x.photo}" alt=""></div>`
+      : `<div class="avatar ${x.type==='artist'?'av-a':'av-s'}">${initials(x.name)}</div>`;
+    if (x.type === 'artist') return `<div class="card" onclick="openDetail('${x.id}')">
+      <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.shop||''}</div></div></div>
+      <div class="badges">
+        ${x.style ? `<span class="badge b-purple">${x.style}</span>` : ''}
+        ${x.nat   ? `<span class="badge b-teal">🌍 ${x.nat}</span>` : ''}
+        ${x.loc   ? `<span class="badge b-amber">📍 ${x.loc}</span>` : ''}
+      </div></div>`;
+    return `<div class="card" onclick="openDetail('${x.id}')">
+      <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.city||''}</div></div></div>
+      <div class="badges">
+        ${x.spec ? `<span class="badge b-purple">${x.spec}</span>` : ''}
+        ${x.loc  ? `<span class="badge b-amber">📍 ${x.loc}</span>` : ''}
+      </div></div>`;
+  }).join('');
+}
+
+// ── PHOTO ──────────────────────────────────────────────────────
+function handlePhoto(input, prefix) {
+  const file = input.files[0]; if (!file) return;
+  if (file.size > 3*1024*1024) { toast('Image trop lourde (max 3 Mo)'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById(prefix+'-prev');
+    prev.src = e.target.result; prev.style.display = 'block';
+    document.getElementById(prefix+'-ph').style.display = 'none';
+    document.getElementById(prefix+'-photo').value = e.target.result;
+    document.getElementById(prefix+'-del').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearPhoto(p) {
+  document.getElementById(p+'-prev').style.display = 'none';
+  document.getElementById(p+'-prev').src = '';
+  document.getElementById(p+'-photo').value = '';
+  document.getElementById(p+'-del').style.display = 'none';
+  document.getElementById(p+'-ph').style.display = 'flex';
+}
+
+// ── REMINDERS UI ───────────────────────────────────────────────
+const REM_OPTS = [
+  { label: "Au moment de l'événement", offset: 0 },
+  { label: '5 minutes avant', offset: 5 },
+  { label: '15 minutes avant', offset: 15 },
+  { label: '30 minutes avant', offset: 30 },
+  { label: '1 heure avant', offset: 60 },
+  { label: '2 heures avant', offset: 120 },
+  { label: 'La veille à 9h', offset: -1 },
+];
+function remLabel(o) { return REM_OPTS.find(r => r.offset === o)?.label || (o + ' min avant'); }
+
+function addRemRow(val) {
+  remRows.push(val !== undefined ? val : 15);
+  renderRemRows();
+  document.getElementById('rem-banner').style.display = 'block';
+}
+function delRemRow(i) { remRows.splice(i,1); renderRemRows(); }
+function renderRemRows() {
+  const el = document.getElementById('rem-form-list'); if (!el) return;
+  el.innerHTML = remRows.map((v,i) => `
+    <div class="rem-row">
+      <select onchange="remRows[${i}]=parseInt(this.value)">
+        ${REM_OPTS.map(o=>`<option value="${o.offset}"${o.offset===v?' selected':''}>${o.label}</option>`).join('')}
+      </select>
+      <button class="rem-del" onclick="delRemRow(${i})">✕</button>
+    </div>`).join('');
+}
+
+// ── NOTIFICATIONS ──────────────────────────────────────────────
+async function askNotifPerm() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  return (await Notification.requestPermission()) === 'granted';
+}
+function remFireTime(startIso, offset) {
+  const s = new Date(startIso);
+  if (offset === -1) { const d = new Date(startIso); d.setDate(d.getDate()-1); d.setHours(9,0,0,0); return d; }
+  return new Date(s.getTime() - offset * 60000);
+}
+function fireNotif(ev, offset) {
+  if (Notification.permission !== 'granted') return;
+  new Notification('🖋 ' + ev.title, {
+    body: [ev.cat, ev.loc ? '📍 '+ev.loc : '', ev.artist ? '🎨 '+ev.artist : ''].filter(Boolean).join(' · '),
+  });
+}
+function rescheduleAll() {
+  notifTimers.forEach(clearTimeout);
+  notifTimers = [];
+  data.events.forEach(ev => {
+    if (!ev.start || !(ev.reminders||[]).length) return;
+    ev.reminders.forEach(offset => {
+      const t = remFireTime(ev.start, offset);
+      const delay = t - Date.now();
+      if (delay > 0) notifTimers.push(setTimeout(() => fireNotif(ev, offset), delay));
+    });
+  });
+}
+
+// ── OPEN / CLOSE ───────────────────────────────────────────────
+function openAdd() {
+  editId = null; remRows = [];
+  const defaultType = tab === 'events' ? 'event' : tab === 'shops' ? 'shop' : 'artist';
+  setFT(defaultType); clearForm();
+  document.getElementById('modal-title').textContent = 'Nouvelle fiche';
+  document.getElementById('ov-add').classList.add('show');
+}
+function closeAll() {
+  ['ov-add','ov-detail','ov-import','ov-backup'].forEach(id =>
+    document.getElementById(id).classList.remove('show'));
+  document.getElementById('xl-file').value = '';
+  document.getElementById('import-info').style.display = 'none';
+  document.getElementById('btn-import').style.display = 'none';
+  importRows = [];
+}
+function setFT(t) {
+  formType = t;
+  ['artist-fields','shop-fields','event-fields'].forEach(id =>
+    document.getElementById(id).style.display = 'none');
+  document.getElementById({ artist:'artist-fields', shop:'shop-fields', event:'event-fields' }[t]).style.display = 'block';
+  ['tt-a','tt-s','tt-e'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById({ artist:'tt-a', shop:'tt-s', event:'tt-e' }[t]).classList.add('on');
+  renderRemRows();
+}
+function clearForm() {
+  ['f-name','f-style','f-nat','f-loc','f-shop','f-insta','f-notes',
+   's-name','s-city','s-loc','s-spec','s-contact','s-notes',
+   'e-title','e-loc','e-artist','e-notes','e-start','e-end'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  clearPhoto('f'); clearPhoto('s');
+  remRows = []; renderRemRows();
+  const b = document.getElementById('rem-banner'); if (b) b.style.display = 'none';
+}
+
+// ── SAVE ENTRY ─────────────────────────────────────────────────
+async function saveEntry() {
+  const id = editId || uid();
+  if (formType === 'artist') {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { toast('Le nom est obligatoire'); return; }
+    const e = { id, type:'artist', name,
+      style: document.getElementById('f-style').value.trim(),
+      nat:   document.getElementById('f-nat').value.trim(),
+      loc:   document.getElementById('f-loc').value.trim(),
+      shop:  document.getElementById('f-shop').value.trim(),
+      insta: document.getElementById('f-insta').value.trim(),
+      notes: document.getElementById('f-notes').value.trim(),
+      photo: document.getElementById('f-photo').value || '' };
+    if (editId) data.artists = data.artists.map(x => x.id===editId ? e : x);
+    else { data.artists.push(e); tab='artists'; }
+
+  } else if (formType === 'shop') {
+    const name = document.getElementById('s-name').value.trim();
+    if (!name) { toast('Le nom est obligatoire'); return; }
+    const e = { id, type:'shop', name,
+      city:    document.getElementById('s-city').value.trim(),
+      loc:     document.getElementById('s-loc').value.trim(),
+      spec:    document.getElementById('s-spec').value.trim(),
+      contact: document.getElementById('s-contact').value.trim(),
+      notes:   document.getElementById('s-notes').value.trim(),
+      photo:   document.getElementById('s-photo').value || '' };
+    if (editId) data.shops = data.shops.map(x => x.id===editId ? e : x);
+    else { data.shops.push(e); tab='shops'; }
+
+  } else {
+    const title = document.getElementById('e-title').value.trim();
+    if (!title) { toast('Le titre est obligatoire'); return; }
+    if (remRows.length > 0) {
+      const ok = await askNotifPerm();
+      if (!ok) toast('⚠️ Notifications refusées — rappels désactivés');
+    }
+    const e = { id, type:'event', title,
+      cat:       document.getElementById('e-cat').value,
+      start:     document.getElementById('e-start').value,
+      end:       document.getElementById('e-end').value,
+      loc:       document.getElementById('e-loc').value.trim(),
+      artist:    document.getElementById('e-artist').value.trim(),
+      notes:     document.getElementById('e-notes').value.trim(),
+      reminders: [...remRows] };
+    if (editId) data.events = data.events.map(x => x.id===editId ? e : x);
+    else { data.events.push(e); tab='events'; }
+  }
+  saveData(); rescheduleAll(); closeAll(); render();
+  toast('✓ Enregistré');
+}
+
+// ── OPEN DETAIL ────────────────────────────────────────────────
+function openDetail(id) {
+  const all = [...data.artists,...data.shops,...data.events];
+  const x = all.find(a => a.id === id); if (!x) return;
+  let html = '<div class="handle"></div>';
+
+  if (x.type === 'event') {
+    html += `<h2>${x.title}</h2>`;
+    const fields = [
+      x.cat    && ['Catégorie', x.cat],
+      x.start  && ['Début', fmtDatetime(x.start)],
+      x.end    && ['Fin', fmtDatetime(x.end)],
+      x.loc    && ['Lieu', x.loc],
+      x.artist && ['Artiste / Intervenant', x.artist],
+      x.notes  && ['Notes', x.notes],
+    ].filter(Boolean);
+    html += fields.map(([k,v]) => `<div class="dm-field"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
+    if ((x.reminders||[]).length) {
+      html += `<div class="reminder-box"><h3>⏰ Rappels programmés</h3>
+        ${x.reminders.map(o=>`<div class="rem-row" style="border:none;padding:5px 0"><span>${remLabel(o)}</span><span>✅</span></div>`).join('')}
+      </div>`;
+    }
+  } else {
+    const bg = x.type==='artist' ? 'var(--purple-l)' : 'var(--teal-l)';
+    const col = x.type==='artist' ? 'var(--purple-d)' : 'var(--teal-d)';
+    html += x.photo
+      ? `<div class="detail-avatar"><img src="${x.photo}" alt="${x.name}"></div>`
+      : `<div class="detail-avatar" style="background:${bg};color:${col}">${initials(x.name)}</div>`;
+    html += `<h2 style="margin-bottom:14px">${x.name||'—'}</h2>`;
+    const fields = x.type==='artist'
+      ? [['Style',x.style],['Nationalité',x.nat],['Emplacement',x.loc],['Boutique',x.shop],['Instagram',x.insta],['Notes',x.notes]]
+      : [['Ville',x.city],['Emplacement',x.loc],['Spécialités',x.spec],['Contact',x.contact],['Notes',x.notes]];
+    html += fields.filter(([,v])=>v).map(([k,v])=>`<div class="dm-field"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
+  }
+
+  html += `
+    <button class="btn-full btn-edit" onclick="editEntry('${id}')">✏️ Modifier</button>
+    <button class="btn-full btn-del"  onclick="deleteEntry('${id}')">🗑 Supprimer</button>
+    <button class="btn-full btn-close" onclick="closeAll()">Fermer</button>`;
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('ov-detail').classList.add('show');
+}
+
+// ── EDIT ───────────────────────────────────────────────────────
+function editEntry(id) {
+  const all = [...data.artists,...data.shops,...data.events];
+  const x = all.find(a => a.id === id); if (!x) return;
+  editId = id; closeAll(); setFT(x.type); clearForm();
+
+  if (x.type === 'artist') {
+    ['name','style','nat','loc','shop','insta','notes'].forEach(k => {
+      const el = document.getElementById('f-'+k); if (el) el.value = x[k]||'';
+    });
+    if (x.photo) {
+      const p = document.getElementById('f-prev'); p.src=x.photo; p.style.display='block';
+      document.getElementById('f-ph').style.display='none';
+      document.getElementById('f-photo').value=x.photo;
+      document.getElementById('f-del').style.display='block';
+    }
+  } else if (x.type === 'shop') {
+    ['name','city','loc','spec','contact','notes'].forEach(k => {
+      const el = document.getElementById('s-'+k); if (el) el.value = x[k]||'';
+    });
+    if (x.photo) {
+      const p = document.getElementById('s-prev'); p.src=x.photo; p.style.display='block';
+      document.getElementById('s-ph').style.display='none';
+      document.getElementById('s-photo').value=x.photo;
+      document.getElementById('s-del').style.display='block';
+    }
+  } else {
+    ['title','loc','artist','notes'].forEach(k => {
+      const el = document.getElementById('e-'+k); if (el) el.value = x[k]||'';
+    });
+    document.getElementById('e-start').value = x.start||'';
+    document.getElementById('e-end').value   = x.end||'';
+    document.getElementById('e-cat').value   = x.cat||'';
+    remRows = [...(x.reminders||[])];
+    renderRemRows();
+    if (remRows.length) document.getElementById('rem-banner').style.display = 'block';
+  }
+  document.getElementById('modal-title').textContent = 'Modifier';
+  document.getElementById('ov-add').classList.add('show');
+}
+
+// ── DELETE ─────────────────────────────────────────────────────
+function deleteEntry(id) {
+  if (!confirm('Supprimer cette fiche ?')) return;
+  data.artists = data.artists.filter(x => x.id !== id);
+  data.shops   = data.shops.filter(x => x.id !== id);
+  data.events  = data.events.filter(x => x.id !== id);
+  saveData(); rescheduleAll(); closeAll(); render();
+  toast('Fiche supprimée');
+}
+
+// ── IMPORT EXCEL ───────────────────────────────────────────────
+function openImport() { document.getElementById('ov-import').classList.add('show'); }
+function setIT(t) {
+  importType = t;
+  ['it-a','it-s','it-e'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById({artist:'it-a',shop:'it-s',event:'it-e'}[t]).classList.add('on');
+}
+const COLS = {
+  artist: ['Nom','Style','Nationalité','Emplacement','Boutique','Instagram','Notes'],
+  shop:   ['Nom','Ville','Emplacement','Spécialités','Contact','Notes'],
+  event:  ['Titre','Catégorie','Début (AAAA-MM-JJThh:mm)','Fin (AAAA-MM-JJThh:mm)','Lieu','Artiste','Notes'],
+};
+function dlTemplate() {
+  if (typeof XLSX === 'undefined') { toast('Chargement en cours…'); return; }
+  const cols = COLS[importType];
+  const example = importType === 'event'
+    ? ['Démo live Alex','🎤 Démonstration','2025-06-14T14:00','2025-06-14T15:00','Scène A','Alex Moreau','']
+    : cols.map(()=>'');
+  const ws = XLSX.utils.aoa_to_sheet([cols, example]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, importType);
+  XLSX.writeFile(wb, `modele_${importType}.xlsx`);
+}
+function loadXL(input) {
+  const file = input.files[0]; if (!file) return;
+  if (typeof XLSX === 'undefined') { toast('Bibliothèque non chargée'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type:'binary' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      importRows = XLSX.utils.sheet_to_json(ws, { defval:'' });
+      showImportPreview(importRows);
+    } catch(err) {
+      document.getElementById('import-info').style.display = 'block';
+      document.getElementById('import-status').innerHTML = `<span class="status-err">❌ Impossible de lire ce fichier.</span>`;
+    }
+  };
+  reader.readAsBinaryString(file);
+}
+function showImportPreview(rows) {
+  document.getElementById('import-info').style.display = 'block';
+  const keys = Object.keys(rows[0]||{});
+  const thead = `<tr>${keys.map(k=>`<th>${k}</th>`).join('')}</tr>`;
+  const tbody = rows.slice(0,5).map(r=>`<tr>${keys.map(k=>`<td>${String(r[k]||'').slice(0,25)}</td>`).join('')}</tr>`).join('');
+  document.getElementById('import-preview').innerHTML = `<table><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+  document.getElementById('import-status').innerHTML = `<span class="status-ok">✓ ${rows.length} ligne(s) détectée(s)</span>`;
+  document.getElementById('btn-import').style.display = 'block';
+}
+function doImport() {
+  let count = 0;
+  importRows.forEach(r => {
+    const keys = Object.keys(r);
+    const get = col => {
+      const k = keys.find(k => k.trim().toLowerCase().startsWith(col.toLowerCase()));
+      return k ? String(r[k]||'').trim() : '';
+    };
+    const id = uid();
+    if (importType === 'artist') {
+      const name = get('Nom'); if (!name) return;
+      data.artists.push({ id, type:'artist', name,
+        style:get('Style'), nat:get('Nationalité'), loc:get('Emplacement'),
+        shop:get('Boutique'), insta:get('Instagram'), notes:get('Notes'), photo:'' });
+    } else if (importType === 'shop') {
+      const name = get('Nom'); if (!name) return;
+      data.shops.push({ id, type:'shop', name,
+        city:get('Ville'), loc:get('Emplacement'),
+        spec:get('Spécialités'), contact:get('Contact'), notes:get('Notes'), photo:'' });
+    } else {
+      const title = get('Titre'); if (!title) return;
+      data.events.push({ id, type:'event', title,
+        cat:get('Catégorie'), start:get('Début'), end:get('Fin'),
+        loc:get('Lieu'), artist:get('Artiste'), notes:get('Notes'), reminders:[] });
+    }
+    count++;
+  });
+  tab = { artist:'artists', shop:'shops', event:'events' }[importType];
+  saveData(); rescheduleAll(); closeAll(); render();
+  toast(`✓ ${count} fiche(s) importée(s)`);
+}
+
+// ── BACKUP EXPORT / IMPORT ─────────────────────────────────────
+function openBackup() {
+  const el = document.getElementById('bk-stats');
+  el.textContent = `${data.artists.length} artiste(s) · ${data.shops.length} boutique(s) · ${data.events.length} événement(s)`;
+  document.getElementById('ov-backup').classList.add('show');
+}
+function exportBackup() {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href = url; a.download = `tattoo-backup-${date}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('✓ Sauvegarde exportée');
+}
+function importBackup(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.artists && !imported.shops && !imported.events) throw new Error();
+      if (!confirm(`Importer ${(imported.artists||[]).length} artiste(s), ${(imported.shops||[]).length} boutique(s), ${(imported.events||[]).length} événement(s) ?\n\nCela remplacera toutes tes données actuelles.`)) return;
+      data = { artists: imported.artists||[], shops: imported.shops||[], events: imported.events||[] };
+      saveData(); rescheduleAll(); closeAll(); render();
+      toast('✓ Sauvegarde importée');
+    } catch(err) {
+      toast('❌ Fichier invalide');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── INIT ───────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
