@@ -20,6 +20,8 @@
   --green-l:#EAF3DE;--green-d:#27500A;
   --red:#E24B4A;--green:#3B6D11;
   --r:10px;--rl:14px;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 @media(prefers-color-scheme:dark){:root{
   --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
@@ -31,27 +33,56 @@
   --blue-l:#0a1e30;--blue-d:#85B7EB;
   --green-l:#162208;--green-d:#C0DD97;
 }}
+
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;overflow-x:hidden}
+
 /* TOPBAR */
 .topbar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:env(safe-area-inset-top,14px) 16px 10px;position:sticky;top:0;z-index:50}
 .topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
 .app-title{font-size:18px;font-weight:700;letter-spacing:-0.3px;white-space:nowrap}
 .topbar-actions{display:flex;gap:6px}
-.btn-sm{font-size:12px;padding:6px 10px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
-.tabs{display:flex;gap:5px}
-.tab{flex:1;padding:7px 2px;border:0.5px solid var(--border);border-radius:var(--r);font-size:11px;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap}
+.btn-sm{font-size:12px;padding:6px 10px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;transition:transform .15s var(--spring),background .15s}
+.btn-sm:active{transform:scale(0.93);background:var(--bg2)}
+
+/* TABS */
+.tabs{display:flex;gap:5px;position:relative}
+.tab{flex:1;padding:7px 2px;border:0.5px solid var(--border);border-radius:var(--r);font-size:11px;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;transition:color .2s,border-color .2s,background .2s,transform .15s var(--spring)}
 .tab.active{background:var(--bg2);color:var(--text);border-color:var(--border2);font-weight:600}
-.cnt{background:var(--purple);color:#fff;border-radius:20px;font-size:10px;padding:1px 5px;font-weight:700}
+.tab:active{transform:scale(0.95)}
+.cnt{background:var(--purple);color:#fff;border-radius:20px;font-size:10px;padding:1px 5px;font-weight:700;display:inline-block;transition:transform .3s var(--spring)}
+.cnt.pop{animation:cntPop .35s var(--spring)}
+@keyframes cntPop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
+
 /* SEARCH */
-.search-wrap{padding:10px 16px;background:var(--bg);border-bottom:0.5px solid var(--border)}
-.search-wrap input{width:100%;padding:9px 14px;font-size:15px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);color:var(--text)}
+.search-wrap{padding:10px 16px;background:var(--bg);border-bottom:0.5px solid var(--border);transition:opacity .2s,transform .2s var(--ease-out)}
+.search-wrap.hidden{opacity:0;transform:translateY(-8px);pointer-events:none;height:0;padding:0;overflow:hidden}
+.search-wrap input{width:100%;padding:9px 14px;font-size:15px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);color:var(--text);transition:border-color .2s,box-shadow .2s}
+.search-wrap input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(83,74,183,.15)}
+
 /* LIST */
-.list{padding:12px 16px;display:flex;flex-direction:column;gap:10px;padding-bottom:90px}
+.list{padding:12px 16px;display:flex;flex-direction:column;gap:10px;padding-bottom:90px;position:relative}
+
+/* SLIDE CONTAINER for tab switching */
+.list-slide{animation:slideIn .28s var(--ease-out) both}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
 /* CARDS */
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;cursor:pointer;transition:transform .1s}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;cursor:pointer;
+  animation:cardIn .3s var(--ease-out) both;
+  transform-origin:center top;
+  position:relative;overflow:hidden}
 .card:active{transform:scale(0.97)}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card.removing{animation:cardOut .25s var(--ease-out) forwards}
+@keyframes cardOut{to{opacity:0;transform:scale(0.92) translateY(-10px);max-height:0;padding:0;margin:0}}
+
+/* RIPPLE */
+.ripple{position:absolute;border-radius:50%;background:rgba(83,74,183,.15);transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+
 .card-head{display:flex;align-items:center;gap:12px}
-.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;overflow:hidden}
+.avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;overflow:hidden;transition:transform .2s var(--spring)}
+.card:active .avatar{transform:scale(0.9)}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .av-a{background:var(--purple-l);color:var(--purple-d)}
 .av-s{background:var(--teal-l);color:var(--teal-d)}
@@ -65,68 +96,104 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .b-blue{background:var(--blue-l);color:var(--blue-d)}
 .b-green{background:var(--green-l);color:var(--green-d)}
 .b-gray{background:var(--bg2);color:var(--text3)}
+
 /* EVENT CARDS */
-.ev-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);cursor:pointer;overflow:hidden;transition:transform .1s}
+.ev-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);cursor:pointer;overflow:hidden;
+  animation:cardIn .3s var(--ease-out) both;
+  position:relative}
 .ev-card:active{transform:scale(0.97)}
-.ev-stripe{height:5px}
+.ev-card.removing{animation:cardOut .25s var(--ease-out) forwards}
+.ev-stripe{height:5px;transition:background .3s}
 .ev-stripe.upcoming{background:var(--purple)}
 .ev-stripe.today{background:var(--red)}
 .ev-stripe.past{background:var(--text3)}
 .ev-body{padding:14px}
 .ev-time{font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
 .ev-title{font-size:16px;font-weight:600;margin-bottom:6px}
+
 /* FAB */
-.fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:20px;width:56px;height:56px;border-radius:50%;background:var(--purple);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100}
-.fab:active{transform:scale(0.93)}
-/* OVERLAY / SHEET */
+.fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:20px;width:56px;height:56px;border-radius:50%;background:var(--purple);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;
+  transition:transform .3s var(--spring),box-shadow .3s;
+  box-shadow:0 4px 20px rgba(83,74,183,.4)}
+.fab:active{transform:scale(0.88)}
+.fab .fab-icon{display:inline-block;transition:transform .3s var(--spring)}
+.fab.open .fab-icon{transform:rotate(45deg)}
+
+/* OVERLAY */
 .overlay{display:none;position:fixed;inset:0;z-index:200}
 .overlay.show{display:flex;align-items:flex-end}
-.ov-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5)}
-.sheet{position:relative;background:var(--bg);border-radius:20px 20px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));width:100%;max-height:93vh;overflow-y:auto;z-index:1}
+.ov-bg{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .3s}
+.overlay.show .ov-bg{background:rgba(0,0,0,0.5)}
+
+/* SHEET with spring animation */
+.sheet{position:relative;background:var(--bg);border-radius:20px 20px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));width:100%;max-height:93vh;overflow-y:auto;z-index:1;
+  transform:translateY(100%);transition:transform .4s var(--spring)}
+.overlay.show .sheet{transform:translateY(0)}
 .handle{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 16px}
 .sheet h2{font-size:18px;font-weight:700;margin-bottom:16px}
 .lbl{font-size:13px;color:var(--text2);display:block;margin-bottom:5px;margin-top:14px}
-.sheet input,.sheet select,.sheet textarea{width:100%;padding:10px 14px;font-size:15px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);appearance:none;font-family:inherit}
+.sheet input,.sheet select,.sheet textarea{width:100%;padding:10px 14px;font-size:15px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);appearance:none;font-family:inherit;transition:border-color .2s,box-shadow .2s}
+.sheet input:focus,.sheet select:focus,.sheet textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(83,74,183,.12)}
 .sheet textarea{resize:vertical;min-height:80px}
+
 /* BUTTONS */
 .row-btns{display:flex;gap:8px;margin-top:20px}
-.btn-cancel{flex:1;padding:13px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;font-size:15px;color:var(--text2);cursor:pointer;font-weight:500}
-.btn-save{flex:2;padding:13px;border:none;border-radius:var(--r);background:var(--purple);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-.btn-full{width:100%;padding:13px;border-radius:var(--r);font-size:15px;cursor:pointer;font-weight:500;margin-top:8px;font-family:inherit}
+.btn-cancel{flex:1;padding:13px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;font-size:15px;color:var(--text2);cursor:pointer;font-weight:500;transition:transform .15s var(--spring),background .15s}
+.btn-cancel:active{transform:scale(0.95);background:var(--bg2)}
+.btn-save{flex:2;padding:13px;border:none;border-radius:var(--r);background:var(--purple);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:transform .15s var(--spring),filter .15s}
+.btn-save:active{transform:scale(0.95);filter:brightness(0.9)}
+.btn-full{width:100%;padding:13px;border-radius:var(--r);font-size:15px;cursor:pointer;font-weight:500;margin-top:8px;font-family:inherit;transition:transform .15s var(--spring),filter .15s}
+.btn-full:active{transform:scale(0.97)}
 .btn-edit{background:var(--purple);color:#fff;border:none}
+.btn-edit:active{filter:brightness(0.9)}
 .btn-del{background:transparent;color:var(--red);border:0.5px solid var(--red)}
 .btn-close{background:transparent;color:var(--text2);border:0.5px solid var(--border2)}
+
 /* TYPE TOGGLE */
 .type-toggle{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.ttype{padding:7px 12px;border:0.5px solid var(--border);border-radius:var(--r);font-size:13px;background:transparent;color:var(--text2);cursor:pointer;font-weight:500}
-.ttype.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+.ttype{padding:7px 12px;border:0.5px solid var(--border);border-radius:var(--r);font-size:13px;background:transparent;color:var(--text2);cursor:pointer;font-weight:500;transition:all .2s var(--spring)}
+.ttype.on{background:var(--purple);color:#fff;border-color:var(--purple);transform:scale(1.03)}
+.ttype:active{transform:scale(0.95)}
+
 /* DETAIL FIELDS */
-.dm-field{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:0.5px solid var(--border);font-size:14px;gap:12px}
+.dm-field{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:0.5px solid var(--border);font-size:14px;gap:12px;
+  animation:fadeSlideIn .2s var(--ease-out) both}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 .dm-field:last-of-type{border:none}
 .dm-key{color:var(--text2);flex-shrink:0}
 .dm-val{font-weight:500;text-align:right;word-break:break-word}
+
 /* PHOTO */
 .photo-picker{display:flex;align-items:center;gap:12px;margin-top:10px}
-.photo-prev{width:64px;height:64px;border-radius:50%;border:0.5px solid var(--border);object-fit:cover}
+.photo-prev{width:64px;height:64px;border-radius:50%;border:0.5px solid var(--border);object-fit:cover;transition:transform .2s var(--spring)}
+.photo-prev:active{transform:scale(0.92)}
 .photo-ph{width:64px;height:64px;border-radius:50%;border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:22px;flex-shrink:0}
 .photo-actions{display:flex;flex-direction:column;gap:6px}
-.btn-photo{padding:7px 14px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--text);font-weight:500;font-family:inherit}
-.detail-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:14px;overflow:hidden}
+.btn-photo{padding:7px 14px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--text);font-weight:500;font-family:inherit;transition:transform .15s var(--spring)}
+.btn-photo:active{transform:scale(0.94)}
+.detail-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:14px;overflow:hidden;
+  animation:avatarIn .4s var(--spring) both}
+@keyframes avatarIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
 .detail-avatar img{width:100%;height:100%;object-fit:cover}
+
 /* REMINDERS */
 .reminder-box{background:var(--bg2);border-radius:var(--r);padding:14px;margin-top:14px}
 .reminder-box h3{font-size:14px;font-weight:600;margin-bottom:10px}
-.rem-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border)}
+.rem-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);animation:fadeSlideIn .2s var(--ease-out) both}
 .rem-row:last-of-type{border:none}
 .rem-row select{flex:1;padding:7px 10px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);font-family:inherit}
-.rem-del{background:transparent;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:0 2px;line-height:1}
-.btn-add-rem{width:100%;margin-top:10px;padding:10px;border:1.5px dashed var(--border2);border-radius:var(--r);background:transparent;font-size:14px;color:var(--purple);cursor:pointer;font-weight:600;font-family:inherit}
-/* NOTIF BANNER */
-.notif-banner{background:var(--amber-l);border-radius:var(--r);padding:12px 14px;margin-top:12px;font-size:13px;color:var(--amber-d);line-height:1.5}
+.rem-del{background:transparent;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;transition:transform .15s var(--spring)}
+.rem-del:active{transform:scale(0.8) rotate(15deg)}
+.btn-add-rem{width:100%;margin-top:10px;padding:10px;border:1.5px dashed var(--border2);border-radius:var(--r);background:transparent;font-size:14px;color:var(--purple);cursor:pointer;font-weight:600;font-family:inherit;transition:transform .15s var(--spring),background .15s}
+.btn-add-rem:active{transform:scale(0.97);background:var(--purple-l)}
+
+/* BANNERS */
+.notif-banner{background:var(--amber-l);border-radius:var(--r);padding:12px 14px;margin-top:12px;font-size:13px;color:var(--amber-d);line-height:1.5;animation:fadeSlideIn .2s var(--ease-out)}
 .tip-box{background:var(--purple-l);border-radius:var(--r);padding:12px 14px;margin-top:14px;font-size:13px;color:var(--purple-d);line-height:1.5}
+
 /* IMPORT */
-.import-zone{border:1.5px dashed var(--border2);border-radius:var(--rl);padding:24px 16px;text-align:center;cursor:pointer;margin:14px 0}
-.import-zone:active{background:var(--bg2)}
+.import-zone{border:1.5px dashed var(--border2);border-radius:var(--rl);padding:24px 16px;text-align:center;cursor:pointer;margin:14px 0;transition:background .2s,transform .15s var(--spring)}
+.import-zone:active{background:var(--bg2);transform:scale(0.98)}
 .import-zone .iz-icon{font-size:36px}
 .import-zone p{font-size:14px;color:var(--text2);margin-top:8px;line-height:1.5}
 .import-preview{background:var(--bg2);border-radius:var(--r);padding:12px;margin-bottom:12px;max-height:180px;overflow:auto}
@@ -135,18 +202,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .import-preview td{padding:4px 8px;border-bottom:0.5px solid var(--border);color:var(--text)}
 .status-ok{color:var(--green);font-size:13px;font-weight:600}
 .status-err{color:var(--red);font-size:13px;font-weight:600}
-.tmpl-link{font-size:13px;color:var(--purple);cursor:pointer;text-decoration:underline;display:inline-block;margin-top:4px}
+.tmpl-link{font-size:13px;color:var(--purple);cursor:pointer;text-decoration:underline;display:inline-block;margin-top:4px;transition:opacity .15s}
+.tmpl-link:active{opacity:.6}
+
 /* BACKUP */
 .backup-row{display:flex;gap:8px;margin-top:14px}
-.btn-backup{flex:1;padding:11px;border-radius:var(--r);font-size:14px;cursor:pointer;font-weight:500;font-family:inherit}
+.btn-backup{flex:1;padding:11px;border-radius:var(--r);font-size:14px;cursor:pointer;font-weight:500;font-family:inherit;transition:transform .15s var(--spring)}
+.btn-backup:active{transform:scale(0.95)}
 .btn-export{background:var(--green-l);color:var(--green-d);border:0.5px solid var(--green-d)}
 .btn-import-bk{background:var(--blue-l);color:var(--blue-d);border:0.5px solid var(--blue-d)}
+
 /* EMPTY */
-.empty{text-align:center;padding:60px 20px;color:var(--text2);font-size:15px;line-height:1.7}
-.empty-icon{font-size:48px;display:block;margin-bottom:10px}
+.empty{text-align:center;padding:60px 20px;color:var(--text2);font-size:15px;line-height:1.7;animation:fadeSlideIn .3s var(--ease-out)}
+.empty-icon{font-size:48px;display:block;margin-bottom:10px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
 /* TOAST */
-.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1}
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity .25s,transform .25s var(--spring);pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Stagger cards */
+.card:nth-child(1),.ev-card:nth-child(1){animation-delay:.03s}
+.card:nth-child(2),.ev-card:nth-child(2){animation-delay:.06s}
+.card:nth-child(3),.ev-card:nth-child(3){animation-delay:.09s}
+.card:nth-child(4),.ev-card:nth-child(4){animation-delay:.12s}
+.card:nth-child(5),.ev-card:nth-child(5){animation-delay:.15s}
+.card:nth-child(n+6),.ev-card:nth-child(n+6){animation-delay:.18s}
 </style>
 </head>
 <body>
@@ -171,10 +252,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 </div>
 
 <div class="list" id="list"></div>
-<button class="fab" onclick="openAdd()">＋</button>
+<button class="fab" id="fab" onclick="openAdd()"><span class="fab-icon">＋</span></button>
 <div class="toast" id="toast"></div>
 
-<!-- ===== FICHE ADD/EDIT ===== -->
+<!-- ADD/EDIT -->
 <div class="overlay" id="ov-add">
   <div class="ov-bg" onclick="closeAll()"></div>
   <div class="sheet">
@@ -248,13 +329,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <span class="lbl">Lieu / Scène / Stand</span><input id="e-loc" placeholder="ex : Scène principale, Hall A">
       <span class="lbl">Artiste / Intervenant</span><input id="e-artist" placeholder="ex : Alex Moreau">
       <span class="lbl">Notes</span><textarea id="e-notes" placeholder="Détails, règles, infos pratiques…"></textarea>
-
       <div class="reminder-box">
         <h3>⏰ Rappels</h3>
         <div id="rem-form-list"></div>
         <button class="btn-add-rem" onclick="addRemRow()">＋ Ajouter un rappel</button>
         <div id="rem-banner" class="notif-banner" style="display:none">
-          ⚠️ Pour recevoir les rappels, autorise les notifications quand Safari te le demande. L'app doit être ajoutée à l'écran d'accueil et ouverte en arrière-plan.
+          ⚠️ Pour recevoir les rappels, autorise les notifications quand Safari te le demande. L'app doit être ajoutée à l'écran d'accueil.
         </div>
       </div>
     </div>
@@ -266,13 +346,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
   </div>
 </div>
 
-<!-- ===== DETAIL ===== -->
+<!-- DETAIL -->
 <div class="overlay" id="ov-detail">
   <div class="ov-bg" onclick="closeAll()"></div>
   <div class="sheet" id="detail-content"></div>
 </div>
 
-<!-- ===== IMPORT ===== -->
+<!-- IMPORT -->
 <div class="overlay" id="ov-import">
   <div class="ov-bg" onclick="closeAll()"></div>
   <div class="sheet">
@@ -294,7 +374,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <div id="import-preview" class="import-preview"></div>
       <p id="import-status"></p>
     </div>
-    <div class="tip-box">💡 Télécharge d'abord le modèle, remplis-le sur ordinateur, puis importe-le ici. Les colonnes doivent correspondre exactement.</div>
+    <div class="tip-box">💡 Télécharge d'abord le modèle, remplis-le sur ordinateur, puis importe-le ici.</div>
     <div class="row-btns">
       <button class="btn-cancel" onclick="closeAll()">Annuler</button>
       <button class="btn-save" id="btn-import" style="display:none" onclick="doImport()">✓ Importer</button>
@@ -302,13 +382,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
   </div>
 </div>
 
-<!-- ===== BACKUP ===== -->
+<!-- BACKUP -->
 <div class="overlay" id="ov-backup">
   <div class="ov-bg" onclick="closeAll()"></div>
   <div class="sheet">
     <div class="handle"></div>
     <h2>💾 Sauvegarde des données</h2>
-    <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:4px">Exporte toutes tes données pour les sauvegarder ou les transférer sur un autre appareil. En cas de mise à jour de l'app, importe ton fichier de sauvegarde pour retrouver toutes tes fiches.</p>
+    <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:4px">Exporte toutes tes données pour les sauvegarder ou les transférer sur un autre appareil.</p>
     <div class="backup-row">
       <button class="btn-backup btn-export" onclick="exportBackup()">⬇️ Exporter mes données</button>
       <label class="btn-backup btn-import-bk" for="bk-file" style="display:flex;align-items:center;justify-content:center;cursor:pointer">
@@ -317,7 +397,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <input type="file" id="bk-file" accept=".json" style="display:none" onchange="importBackup(this)">
     </div>
     <div class="tip-box" style="margin-top:14px">
-      💡 <strong>Conseil :</strong> exporte une sauvegarde avant chaque mise à jour de l'app. Le fichier .json contient artistes, boutiques et événements.
+      💡 <strong>Conseil :</strong> exporte une sauvegarde avant chaque mise à jour de l'app.
     </div>
     <div id="bk-stats" style="margin-top:14px;font-size:13px;color:var(--text2)"></div>
     <button class="btn-full btn-close" onclick="closeAll()" style="margin-top:16px">Fermer</button>
@@ -326,14 +406,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
-// ── STATE ──────────────────────────────────────────────────────
 const STORE = 'tattoo-v3';
 let data = { artists:[], shops:[], events:[] };
 let tab = 'artists', formType = 'artist', importType = 'artist';
 let editId = null, importRows = [], remRows = [];
 let notifTimers = [];
 
-// ── PERSIST ────────────────────────────────────────────────────
 function loadData() {
   try { const d = localStorage.getItem(STORE); if (d) data = JSON.parse(d); } catch(e){}
   if (!data.events) data.events = [];
@@ -344,7 +422,6 @@ function saveData() {
   try { localStorage.setItem(STORE, JSON.stringify(data)); } catch(e){ toast('❌ Erreur de sauvegarde'); }
 }
 
-// ── UTILS ──────────────────────────────────────────────────────
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
@@ -354,7 +431,6 @@ function initials(n) {
   return (n||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
 }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-
 function fmtDatetime(iso) {
   if (!iso) return '—';
   const d = new Date(iso);
@@ -368,17 +444,39 @@ function isToday(iso) {
   return d.toDateString() === n.toDateString();
 }
 
-// ── TABS ───────────────────────────────────────────────────────
+// Ripple effect
+function addRipple(el, e) {
+  const rect = el.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const x = (e.clientX || e.touches?.[0]?.clientX || rect.left + rect.width/2) - rect.left - size/2;
+  const y = (e.clientY || e.touches?.[0]?.clientY || rect.top + rect.height/2) - rect.top - size/2;
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+  el.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+}
+
+// Pop counter badge
+function popCnt(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+
 function switchTab(t) {
   tab = t;
   ['a','s','e'].forEach(x => document.getElementById('tab-'+x).classList.remove('active'));
   document.getElementById('tab-' + {artists:'a',shops:'s',events:'e'}[t]).classList.add('active');
-  document.getElementById('search-wrap').style.display = t === 'events' ? 'none' : 'block';
+  const sw = document.getElementById('search-wrap');
+  if (t === 'events') sw.classList.add('hidden');
+  else { sw.classList.remove('hidden'); }
   render();
 }
 
-// ── RENDER ─────────────────────────────────────────────────────
 function render() {
+  const prevA = data.artists.length, prevS = data.shops.length, prevE = data.events.length;
   document.getElementById('cnt-a').textContent = data.artists.length;
   document.getElementById('cnt-s').textContent = data.shops.length;
   document.getElementById('cnt-e').textContent = data.events.length;
@@ -392,12 +490,12 @@ function render() {
       list.innerHTML = `<div class="empty"><span class="empty-icon">📅</span>Aucun événement.<br>Appuie sur <strong>＋</strong> pour en créer un.</div>`;
       return;
     }
-    list.innerHTML = sorted.map(x => {
+    list.innerHTML = sorted.map((x,i) => {
       const past = isPast(x.end || x.start);
       const today = isToday(x.start);
       const sc = past ? 'past' : today ? 'today' : 'upcoming';
       const rc = (x.reminders||[]).length;
-      return `<div class="ev-card" onclick="openDetail('${x.id}')">
+      return `<div class="ev-card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
         <div class="ev-stripe ${sc}"></div>
         <div class="ev-body">
           <div class="ev-time">${x.start ? fmtDatetime(x.start) : 'Pas de date'}</div>
@@ -422,18 +520,18 @@ function render() {
     list.innerHTML = `<div class="empty"><span class="empty-icon">👻</span>Aucun résultat.<br>Appuie sur <strong>＋</strong> pour ajouter<br>ou utilise Import Excel.</div>`;
     return;
   }
-  list.innerHTML = items.map(x => {
+  list.innerHTML = items.map((x,i) => {
     const av = x.photo
       ? `<div class="avatar"><img src="${x.photo}" alt=""></div>`
       : `<div class="avatar ${x.type==='artist'?'av-a':'av-s'}">${initials(x.name)}</div>`;
-    if (x.type === 'artist') return `<div class="card" onclick="openDetail('${x.id}')">
+    if (x.type === 'artist') return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
       <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.shop||''}</div></div></div>
       <div class="badges">
         ${x.style ? `<span class="badge b-purple">${x.style}</span>` : ''}
         ${x.nat   ? `<span class="badge b-teal">🌍 ${x.nat}</span>` : ''}
         ${x.loc   ? `<span class="badge b-amber">📍 ${x.loc}</span>` : ''}
       </div></div>`;
-    return `<div class="card" onclick="openDetail('${x.id}')">
+    return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
       <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.city||''}</div></div></div>
       <div class="badges">
         ${x.spec ? `<span class="badge b-purple">${x.spec}</span>` : ''}
@@ -442,7 +540,11 @@ function render() {
   }).join('');
 }
 
-// ── PHOTO ──────────────────────────────────────────────────────
+function rippleAndOpen(el, e, id) {
+  addRipple(el, e);
+  setTimeout(() => openDetail(id), 120);
+}
+
 function handlePhoto(input, prefix) {
   const file = input.files[0]; if (!file) return;
   if (file.size > 3*1024*1024) { toast('Image trop lourde (max 3 Mo)'); return; }
@@ -464,7 +566,6 @@ function clearPhoto(p) {
   document.getElementById(p+'-ph').style.display = 'flex';
 }
 
-// ── REMINDERS UI ───────────────────────────────────────────────
 const REM_OPTS = [
   { label: "Au moment de l'événement", offset: 0 },
   { label: '5 minutes avant', offset: 5 },
@@ -493,7 +594,6 @@ function renderRemRows() {
     </div>`).join('');
 }
 
-// ── NOTIFICATIONS ──────────────────────────────────────────────
 async function askNotifPerm() {
   if (!('Notification' in window)) return false;
   if (Notification.permission === 'granted') return true;
@@ -511,8 +611,7 @@ function fireNotif(ev, offset) {
   });
 }
 function rescheduleAll() {
-  notifTimers.forEach(clearTimeout);
-  notifTimers = [];
+  notifTimers.forEach(clearTimeout); notifTimers = [];
   data.events.forEach(ev => {
     if (!ev.start || !(ev.reminders||[]).length) return;
     ev.reminders.forEach(offset => {
@@ -523,22 +622,25 @@ function rescheduleAll() {
   });
 }
 
-// ── OPEN / CLOSE ───────────────────────────────────────────────
 function openAdd() {
   editId = null; remRows = [];
   const defaultType = tab === 'events' ? 'event' : tab === 'shops' ? 'shop' : 'artist';
   setFT(defaultType); clearForm();
   document.getElementById('modal-title').textContent = 'Nouvelle fiche';
+  document.getElementById('fab').classList.add('open');
   document.getElementById('ov-add').classList.add('show');
 }
+
 function closeAll() {
   ['ov-add','ov-detail','ov-import','ov-backup'].forEach(id =>
     document.getElementById(id).classList.remove('show'));
+  document.getElementById('fab').classList.remove('open');
   document.getElementById('xl-file').value = '';
   document.getElementById('import-info').style.display = 'none';
   document.getElementById('btn-import').style.display = 'none';
   importRows = [];
 }
+
 function setFT(t) {
   formType = t;
   ['artist-fields','shop-fields','event-fields'].forEach(id =>
@@ -548,6 +650,7 @@ function setFT(t) {
   document.getElementById({ artist:'tt-a', shop:'tt-s', event:'tt-e' }[t]).classList.add('on');
   renderRemRows();
 }
+
 function clearForm() {
   ['f-name','f-style','f-nat','f-loc','f-shop','f-insta','f-notes',
    's-name','s-city','s-loc','s-spec','s-contact','s-notes',
@@ -559,7 +662,6 @@ function clearForm() {
   const b = document.getElementById('rem-banner'); if (b) b.style.display = 'none';
 }
 
-// ── SAVE ENTRY ─────────────────────────────────────────────────
 async function saveEntry() {
   const id = editId || uid();
   if (formType === 'artist') {
@@ -575,7 +677,7 @@ async function saveEntry() {
       photo: document.getElementById('f-photo').value || '' };
     if (editId) data.artists = data.artists.map(x => x.id===editId ? e : x);
     else { data.artists.push(e); tab='artists'; }
-
+    popCnt('cnt-a');
   } else if (formType === 'shop') {
     const name = document.getElementById('s-name').value.trim();
     if (!name) { toast('Le nom est obligatoire'); return; }
@@ -588,7 +690,7 @@ async function saveEntry() {
       photo:   document.getElementById('s-photo').value || '' };
     if (editId) data.shops = data.shops.map(x => x.id===editId ? e : x);
     else { data.shops.push(e); tab='shops'; }
-
+    popCnt('cnt-s');
   } else {
     const title = document.getElementById('e-title').value.trim();
     if (!title) { toast('Le titre est obligatoire'); return; }
@@ -606,12 +708,12 @@ async function saveEntry() {
       reminders: [...remRows] };
     if (editId) data.events = data.events.map(x => x.id===editId ? e : x);
     else { data.events.push(e); tab='events'; }
+    popCnt('cnt-e');
   }
   saveData(); rescheduleAll(); closeAll(); render();
   toast('✓ Enregistré');
 }
 
-// ── OPEN DETAIL ────────────────────────────────────────────────
 function openDetail(id) {
   const all = [...data.artists,...data.shops,...data.events];
   const x = all.find(a => a.id === id); if (!x) return;
@@ -627,7 +729,7 @@ function openDetail(id) {
       x.artist && ['Artiste / Intervenant', x.artist],
       x.notes  && ['Notes', x.notes],
     ].filter(Boolean);
-    html += fields.map(([k,v]) => `<div class="dm-field"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
+    html += fields.map(([k,v],i) => `<div class="dm-field" style="animation-delay:${i*0.05}s"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
     if ((x.reminders||[]).length) {
       html += `<div class="reminder-box"><h3>⏰ Rappels programmés</h3>
         ${x.reminders.map(o=>`<div class="rem-row" style="border:none;padding:5px 0"><span>${remLabel(o)}</span><span>✅</span></div>`).join('')}
@@ -643,23 +745,21 @@ function openDetail(id) {
     const fields = x.type==='artist'
       ? [['Style',x.style],['Nationalité',x.nat],['Emplacement',x.loc],['Boutique',x.shop],['Instagram',x.insta],['Notes',x.notes]]
       : [['Ville',x.city],['Emplacement',x.loc],['Spécialités',x.spec],['Contact',x.contact],['Notes',x.notes]];
-    html += fields.filter(([,v])=>v).map(([k,v])=>`<div class="dm-field"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
+    html += fields.filter(([,v])=>v).map(([k,v],i)=>`<div class="dm-field" style="animation-delay:${i*0.05}s"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
   }
 
   html += `
     <button class="btn-full btn-edit" onclick="editEntry('${id}')">✏️ Modifier</button>
-    <button class="btn-full btn-del"  onclick="deleteEntry('${id}')">🗑 Supprimer</button>
+    <button class="btn-full btn-del"  onclick="animateRemove('${id}')">🗑 Supprimer</button>
     <button class="btn-full btn-close" onclick="closeAll()">Fermer</button>`;
   document.getElementById('detail-content').innerHTML = html;
   document.getElementById('ov-detail').classList.add('show');
 }
 
-// ── EDIT ───────────────────────────────────────────────────────
 function editEntry(id) {
   const all = [...data.artists,...data.shops,...data.events];
   const x = all.find(a => a.id === id); if (!x) return;
   editId = id; closeAll(); setFT(x.type); clearForm();
-
   if (x.type === 'artist') {
     ['name','style','nat','loc','shop','insta','notes'].forEach(k => {
       const el = document.getElementById('f-'+k); if (el) el.value = x[k]||'';
@@ -692,20 +792,24 @@ function editEntry(id) {
     if (remRows.length) document.getElementById('rem-banner').style.display = 'block';
   }
   document.getElementById('modal-title').textContent = 'Modifier';
+  document.getElementById('fab').classList.add('open');
   document.getElementById('ov-add').classList.add('show');
 }
 
-// ── DELETE ─────────────────────────────────────────────────────
-function deleteEntry(id) {
+function animateRemove(id) {
   if (!confirm('Supprimer cette fiche ?')) return;
+  closeAll();
+  deleteEntry(id);
+}
+
+function deleteEntry(id) {
   data.artists = data.artists.filter(x => x.id !== id);
   data.shops   = data.shops.filter(x => x.id !== id);
   data.events  = data.events.filter(x => x.id !== id);
-  saveData(); rescheduleAll(); closeAll(); render();
+  saveData(); rescheduleAll(); render();
   toast('Fiche supprimée');
 }
 
-// ── IMPORT EXCEL ───────────────────────────────────────────────
 function openImport() { document.getElementById('ov-import').classList.add('show'); }
 function setIT(t) {
   importType = t;
@@ -783,13 +887,13 @@ function doImport() {
   });
   tab = { artist:'artists', shop:'shops', event:'events' }[importType];
   saveData(); rescheduleAll(); closeAll(); render();
+  popCnt('cnt-' + {artist:'a',shop:'s',event:'e'}[importType]);
   toast(`✓ ${count} fiche(s) importée(s)`);
 }
 
-// ── BACKUP EXPORT / IMPORT ─────────────────────────────────────
 function openBackup() {
-  const el = document.getElementById('bk-stats');
-  el.textContent = `${data.artists.length} artiste(s) · ${data.shops.length} boutique(s) · ${data.events.length} événement(s)`;
+  document.getElementById('bk-stats').textContent =
+    `${data.artists.length} artiste(s) · ${data.shops.length} boutique(s) · ${data.events.length} événement(s)`;
   document.getElementById('ov-backup').classList.add('show');
 }
 function exportBackup() {
@@ -797,8 +901,7 @@ function exportBackup() {
   const blob = new Blob([json], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const date = new Date().toISOString().slice(0,10);
-  a.href = url; a.download = `tattoo-backup-${date}.json`;
+  a.href = url; a.download = `inkfactory-backup-${new Date().toISOString().slice(0,10)}.json`;
   a.click(); URL.revokeObjectURL(url);
   toast('✓ Sauvegarde exportée');
 }
@@ -813,14 +916,11 @@ function importBackup(input) {
       data = { artists: imported.artists||[], shops: imported.shops||[], events: imported.events||[] };
       saveData(); rescheduleAll(); closeAll(); render();
       toast('✓ Sauvegarde importée');
-    } catch(err) {
-      toast('❌ Fichier invalide');
-    }
+    } catch(err) { toast('❌ Fichier invalide'); }
   };
   reader.readAsText(file);
 }
 
-// ── INIT ───────────────────────────────────────────────────────
 loadData();
 </script>
 </body>
