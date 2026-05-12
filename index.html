@@ -242,7 +242,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
   </div>
   <div class="tabs">
     <button class="tab active" id="tab-a" onclick="switchTab('artists')">🎨 Artistes <span class="cnt" id="cnt-a">0</span></button>
-    <button class="tab" id="tab-s" onclick="switchTab('shops')">🏪 Boutiques <span class="cnt" id="cnt-s">0</span></button>
+    <button class="tab" id="tab-s" onclick="switchTab('shops')">🏪 Stands <span class="cnt" id="cnt-s">0</span></button>
     <button class="tab" id="tab-e" onclick="switchTab('events')">📅 Événements <span class="cnt" id="cnt-e">0</span></button>
   </div>
 </div>
@@ -263,7 +263,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <h2 id="modal-title">Nouvelle fiche</h2>
     <div class="type-toggle">
       <button class="ttype on" id="tt-a" onclick="setFT('artist')">🎨 Artiste</button>
-      <button class="ttype" id="tt-s" onclick="setFT('shop')">🏪 Boutique</button>
+      <button class="ttype" id="tt-s" onclick="setFT('shop')">🏪 Stand</button>
       <button class="ttype" id="tt-e" onclick="setFT('event')">📅 Événement</button>
     </div>
 
@@ -284,14 +284,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <span class="lbl">Style(s) de tatouage</span><input id="f-style" placeholder="ex : Blackwork, Fineline, Japanese">
       <span class="lbl">Nationalité</span><input id="f-nat" placeholder="ex : Français, Japonais">
       <span class="lbl">Emplacement dans l'événement</span><input id="f-loc" placeholder="ex : Hall A – Stand 12">
-      <span class="lbl">Boutique / Studio</span><input id="f-shop" placeholder="ex : Dark Ink Studio">
+      <span class="lbl">Boutique / Studio</span><input id="f-shop" placeholder="ex : Dark Ink Studio, Food Truck Bio, Galerie X…">
       <span class="lbl">Instagram / Contact</span><input id="f-insta" placeholder="ex : @artiste_tattoo">
       <span class="lbl">Notes</span><textarea id="f-notes" placeholder="Prix session, disponibilités, anecdotes…"></textarea>
     </div>
 
     <!-- BOUTIQUE -->
     <div id="shop-fields" style="display:none">
-      <span class="lbl">Photo / Logo</span>
+      <span class="lbl">Photo / Logo du stand du stand</span>
       <div class="photo-picker">
         <div class="photo-ph" id="s-ph">📷</div>
         <img id="s-prev" class="photo-prev" style="display:none" alt="">
@@ -302,11 +302,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
           <button class="btn-photo" id="s-del" style="display:none;color:var(--red)" onclick="clearPhoto('s')">✕ Retirer</button>
         </div>
       </div>
-      <span class="lbl">Nom de la boutique *</span><input id="s-name" placeholder="ex : Dark Ink Studio">
+      <span class="lbl">Nom du stand *</span><input id="s-name" placeholder="ex : Dark Ink Studio, Food Truck Bio, Galerie X…">
       <span class="lbl">Ville / Pays</span><input id="s-city" placeholder="ex : Paris, France">
       <span class="lbl">Emplacement dans l'événement</span><input id="s-loc" placeholder="ex : Hall B – Stand 5">
       <span class="lbl">Spécialités</span><input id="s-spec" placeholder="ex : Blackwork, Neo-trad…">
-      <span class="lbl">Site / Instagram</span><input id="s-contact" placeholder="ex : @boutique_tattoo">
+      <span class="lbl">Site / Instagram</span><input id="s-contact" placeholder="ex : @stand_officiel">
       <span class="lbl">Notes</span><textarea id="s-notes" placeholder="Produits, infos, collaborations…"></textarea>
     </div>
 
@@ -362,7 +362,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <span class="lbl" style="margin-top:14px">Type de données</span>
     <div class="type-toggle">
       <button class="ttype on" id="it-a" onclick="setIT('artist')">🎨 Artistes</button>
-      <button class="ttype" id="it-s" onclick="setIT('shop')">🏪 Boutiques</button>
+      <button class="ttype" id="it-s" onclick="setIT('shop')">🏪 Stands</button>
       <button class="ttype" id="it-e" onclick="setIT('event')">📅 Événements</button>
     </div>
     <div class="import-zone" onclick="document.getElementById('xl-file').click()">
@@ -893,7 +893,7 @@ function doImport() {
 
 function openBackup() {
   document.getElementById('bk-stats').textContent =
-    `${data.artists.length} artiste(s) · ${data.shops.length} boutique(s) · ${data.events.length} événement(s)`;
+    `${data.artists.length} artiste(s) · ${data.shops.length} stand(s) · ${data.events.length} événement(s)`;
   document.getElementById('ov-backup').classList.add('show');
 }
 function exportBackup() {
@@ -912,7 +912,7 @@ function importBackup(input) {
     try {
       const imported = JSON.parse(e.target.result);
       if (!imported.artists && !imported.shops && !imported.events) throw new Error();
-      if (!confirm(`Importer ${(imported.artists||[]).length} artiste(s), ${(imported.shops||[]).length} boutique(s), ${(imported.events||[]).length} événement(s) ?\n\nCela remplacera toutes tes données actuelles.`)) return;
+      if (!confirm(`Importer ${(imported.artists||[]).length} artiste(s), ${(imported.shops||[]).length} stand(s), ${(imported.events||[]).length} événement(s) ?\n\nCela remplacera toutes tes données actuelles.`)) return;
       data = { artists: imported.artists||[], shops: imported.shops||[], events: imported.events||[] };
       saveData(); rescheduleAll(); closeAll(); render();
       toast('✓ Sauvegarde importée');
