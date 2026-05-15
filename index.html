@@ -53,6 +53,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .cnt.pop{animation:cntPop .35s var(--spring)}
 @keyframes cntPop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
 
+/* AVAILABILITY GRID */
+.avail-grid{display:grid;grid-template-columns:60px 1fr 1fr;gap:6px;margin-top:6px;background:var(--bg2);padding:10px;border-radius:var(--r)}
+.avail-cell{padding:9px 4px;border-radius:var(--r);font-size:13px;font-weight:500;text-align:center;cursor:pointer;border:none;transition:all .2s var(--spring);font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px}
+.avail-day{background:transparent;color:var(--text2);font-weight:600;cursor:default;font-size:13px}
+.avail-slot{background:var(--bg);color:var(--text3);border:0.5px solid var(--border)}
+.avail-slot.on{background:var(--purple);color:#fff;border-color:var(--purple);transform:scale(1.02)}
+.avail-slot:active{transform:scale(0.95)}
+.avail-slot.on:active{transform:scale(0.95)}
+.avail-header{background:transparent;color:var(--text3);font-weight:600;cursor:default;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* AVAILABILITY BADGES on cards */
+.avail-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.avail-pill{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--purple-l);color:var(--purple-d);font-weight:600}
+
+/* AVAILABILITY in detail view */
+.avail-detail{background:var(--bg2);border-radius:var(--r);padding:12px;margin-top:14px;display:grid;grid-template-columns:60px 1fr 1fr;gap:6px}
+.avail-detail-day{font-size:13px;color:var(--text2);font-weight:600;align-self:center}
+.avail-detail-slot{padding:7px;border-radius:var(--r);font-size:12px;text-align:center;background:var(--bg);color:var(--text3);border:0.5px solid var(--border)}
+.avail-detail-slot.on{background:var(--purple);color:#fff;border-color:var(--purple);font-weight:600}
+
 /* SEARCH */
 .search-wrap{padding:10px 16px;background:var(--bg);border-bottom:0.5px solid var(--border);transition:opacity .2s,transform .2s var(--ease-out)}
 .search-wrap.hidden{opacity:0;transform:translateY(-8px);pointer-events:none;height:0;padding:0;overflow:hidden}
@@ -294,12 +314,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <span class="lbl">Emplacement dans l'événement</span><input id="f-loc" placeholder="ex : Hall A – Stand 12">
       <span class="lbl">Boutique / Studio</span><input id="f-shop" placeholder="ex : Dark Ink Studio, Food Truck Bio, Galerie X…">
       <span class="lbl">Instagram / Contact</span><input id="f-insta" placeholder="ex : @artiste_tattoo">
-      <span class="lbl">Notes</span><textarea id="f-notes" placeholder="Prix session, disponibilités, anecdotes…"></textarea>
+      <span class="lbl">Disponibilités</span>
+      <div class="avail-grid" id="f-avail-grid"></div>
+      <span class="lbl">Notes</span><textarea id="f-notes" placeholder="Prix session, anecdotes…"></textarea>
     </div>
 
     <!-- BOUTIQUE -->
     <div id="shop-fields" style="display:none">
-      <span class="lbl">Photo / Logo du stand du stand</span>
+      <span class="lbl">Photo / Logo du stand</span>
       <div class="photo-picker">
         <div class="photo-ph" id="s-ph">📷</div>
         <img id="s-prev" class="photo-prev" style="display:none" alt="">
@@ -419,6 +441,68 @@ let data = { artists:[], shops:[], events:[] };
 let tab = 'artists', formType = 'artist', importType = 'artist';
 let editId = null, importRows = [], remRows = [];
 let notifTimers = [];
+
+// AVAILABILITY
+const AVAIL_DAYS = [
+  { key: 'fri', label: 'Ven.' },
+  { key: 'sat', label: 'Sam.' },
+  { key: 'sun', label: 'Dim.' },
+];
+const AVAIL_SLOTS = [
+  { key: 'am', label: '☀️ Matin' },
+  { key: 'pm', label: '🌆 Aprèm' },
+];
+let formAvail = {}; // { fri_am: true, sat_pm: true, ... }
+
+function renderAvailGrid() {
+  const grid = document.getElementById('f-avail-grid');
+  if (!grid) return;
+  let html = `<div class="avail-cell avail-header"></div>`;
+  AVAIL_SLOTS.forEach(s => {
+    html += `<div class="avail-cell avail-header">${s.label}</div>`;
+  });
+  AVAIL_DAYS.forEach(d => {
+    html += `<div class="avail-cell avail-day">${d.label}</div>`;
+    AVAIL_SLOTS.forEach(s => {
+      const k = `${d.key}_${s.key}`;
+      const on = formAvail[k] ? 'on' : '';
+      html += `<button type="button" class="avail-cell avail-slot ${on}" onclick="toggleAvail('${k}')">${formAvail[k] ? '✓' : ''}</button>`;
+    });
+  });
+  grid.innerHTML = html;
+}
+function toggleAvail(key) {
+  formAvail[key] = !formAvail[key];
+  renderAvailGrid();
+}
+function availSummary(av) {
+  if (!av) return [];
+  const result = [];
+  AVAIL_DAYS.forEach(d => {
+    const am = av[`${d.key}_am`];
+    const pm = av[`${d.key}_pm`];
+    if (am && pm) result.push(`${d.label} journée`);
+    else if (am) result.push(`${d.label} matin`);
+    else if (pm) result.push(`${d.label} aprèm`);
+  });
+  return result;
+}
+function renderAvailDetail(av) {
+  if (!av || !Object.values(av).some(v => v)) return '';
+  let html = '<div class="avail-detail">';
+  html += `<div></div>`;
+  AVAIL_SLOTS.forEach(s => { html += `<div class="avail-detail-slot" style="background:transparent;border:none;color:var(--text3);font-weight:600;font-size:11px;text-transform:uppercase">${s.label}</div>`; });
+  AVAIL_DAYS.forEach(d => {
+    html += `<div class="avail-detail-day">${d.label}</div>`;
+    AVAIL_SLOTS.forEach(s => {
+      const k = `${d.key}_${s.key}`;
+      const on = av[k] ? 'on' : '';
+      html += `<div class="avail-detail-slot ${on}">${av[k] ? '✓' : '—'}</div>`;
+    });
+  });
+  html += '</div>';
+  return html;
+}
 
 function loadData() {
   try { const d = localStorage.getItem(STORE); if (d) data = JSON.parse(d); } catch(e){}
@@ -551,7 +635,9 @@ function render() {
         ${x.style ? `<span class="badge b-purple">${x.style}</span>` : ''}
         ${x.nat   ? `<span class="badge b-teal">🌍 ${x.nat}</span>` : ''}
         ${x.loc   ? `<span class="badge b-amber">📍 ${x.loc}</span>` : ''}
-      </div></div>`;
+      </div>
+      ${availSummary(x.avail).length ? `<div class="avail-badges">${availSummary(x.avail).map(s=>`<span class="avail-pill">${s}</span>`).join('')}</div>` : ''}
+    </div>`;
     return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
       <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.city||''}</div></div></div>
       <div class="badges">
@@ -680,6 +766,7 @@ function clearForm() {
   });
   clearPhoto('f'); clearPhoto('s');
   remRows = []; renderRemRows();
+  formAvail = {}; renderAvailGrid();
   const b = document.getElementById('rem-banner'); if (b) b.style.display = 'none';
 }
 
@@ -695,7 +782,8 @@ async function saveEntry() {
       shop:  document.getElementById('f-shop').value.trim(),
       insta: document.getElementById('f-insta').value.trim(),
       notes: document.getElementById('f-notes').value.trim(),
-      photo: document.getElementById('f-photo').value || '' };
+      photo: document.getElementById('f-photo').value || '',
+      avail: { ...formAvail } };
     if (editId) data.artists = data.artists.map(x => x.id===editId ? e : x);
     else { data.artists.push(e); tab='artists'; }
     popCnt('cnt-a');
@@ -767,6 +855,13 @@ function openDetail(id) {
       ? [['Style',x.style],['Nationalité',x.nat],['Emplacement',x.loc],['Boutique',x.shop],['Instagram',x.insta],['Notes',x.notes]]
       : [['Ville',x.city],['Emplacement',x.loc],['Spécialités',x.spec],['Contact',x.contact],['Notes',x.notes]];
     html += fields.filter(([,v])=>v).map(([k,v],i)=>`<div class="dm-field" style="animation-delay:${i*0.05}s"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
+    if (x.type === 'artist') {
+      const summary = availSummary(x.avail);
+      if (summary.length) {
+        html += `<div style="margin-top:14px;font-size:13px;color:var(--text2);font-weight:600">⏱ Disponibilités</div>`;
+        html += renderAvailDetail(x.avail);
+      }
+    }
   }
 
   html += `
@@ -785,6 +880,8 @@ function editEntry(id) {
     ['name','style','nat','loc','shop','insta','notes'].forEach(k => {
       const el = document.getElementById('f-'+k); if (el) el.value = x[k]||'';
     });
+    formAvail = { ...(x.avail || {}) };
+    renderAvailGrid();
     if (x.photo) {
       const p = document.getElementById('f-prev'); p.src=x.photo; p.style.display='block';
       document.getElementById('f-ph').style.display='none';
