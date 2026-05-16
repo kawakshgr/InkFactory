@@ -13,16 +13,17 @@
 html,body{touch-action:manipulation}
 .card,.ev-card,.tab,.btn-sm,.fab,.filter-chip,button{touch-action:manipulation}
 :root{
-  --bg:#000000;--bg2:#0f0f0f;--bg3:#000000;
-  --text:#f0f0f0;--text2:#8a8a8a;--text3:#555555;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
-  --purple:#C8302C;--purple-l:#2a0d0c;--purple-d:#FF6B6B;
+  /* Ink Factory Gold — noir + or vieilli */
+  --bg:#000000;--bg2:#0f0e08;--bg3:#000000;
+  --text:#f5f0e0;--text2:#a39076;--text3:#5a5040;
+  --border:rgba(212,175,55,0.08);--border2:rgba(212,175,55,0.22);
+  --purple:#D4AF37;--purple-l:#2a2008;--purple-d:#F4D03F;
   --teal-l:#0a2018;--teal-d:#88D8B0;
   --amber-l:#2a1f08;--amber-d:#F0C870;
   --blue-l:#0a1828;--blue-d:#85B7EB;
   --green-l:#142210;--green-d:#A8E063;
   --gold-l:#2a2008;--gold-d:#F4D03F;
-  --red:#FF4D4D;--green:#A8E063;
+  --red:#E24B4A;--green:#A8E063;
   --r:10px;--rl:14px;
   --spring:cubic-bezier(0.34,1.56,0.64,1);
   --ease-out:cubic-bezier(0.22,1,0.36,1);
@@ -74,12 +75,26 @@ body.irezumi .pres-section{background:#f3e6c4;border-color:#a87d1a}
 body.irezumi .pres-section .lbl{color:#7a5a1a}
 body.irezumi .stat-bar-fill{background:linear-gradient(90deg,#1a3a5c 0%,#c8312c 100%)}
 body.irezumi .ev-countdown,body.irezumi .today-next-cd{color:#8b1a1a}
-body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative}
+
+/* INK SPLATTER BACKGROUND */
+.ink-splatter{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:0.10;pointer-events:none;overflow:hidden}
+.ink-splatter svg{width:100%;height:100%}
+.wave-deco{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden;display:none}
+.wave-deco svg{width:100%;height:100%}
+body.irezumi .ink-splatter{display:none}
+body.irezumi .wave-deco{display:block;opacity:0.18}
+.topbar,.search-wrap,.filter-bar,.list,.fab,.overlay,.toast,#present-overlay{position:relative;z-index:1}
 
 /* TOPBAR */
-.topbar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:env(safe-area-inset-top,14px) 16px 10px;position:sticky;top:0;z-index:50}
+.topbar{background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);padding:env(safe-area-inset-top,14px) 16px 10px;position:sticky;top:0;z-index:50}
+body.irezumi .topbar{background:rgba(251,246,236,0.9)}
 .topbar-row{text-align:center;margin-bottom:10px}
-.app-title{font-size:17px;font-weight:700;letter-spacing:-0.3px;display:block;margin-bottom:10px}
+.app-title{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:18px;font-weight:800;letter-spacing:2px}
+.title-text{background:linear-gradient(135deg,#F4D03F 0%,#D4AF37 50%,#8B6914 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+body.irezumi .title-text{background:linear-gradient(135deg,#8B6914 0%,#6b4e0a 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.title-feather{font-size:16px;display:inline-block;filter:hue-rotate(20deg) saturate(1.5) brightness(1.1)}
+.title-feather.left{transform:scaleX(-1)}
 .topbar-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .btn-sm{font-size:12px;padding:6px 12px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;transition:transform .15s var(--spring),background .15s}
 .btn-sm:active{transform:scale(0.93);background:var(--bg2)}
@@ -99,14 +114,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .search-wrap.hidden{opacity:0;transform:translateY(-8px);pointer-events:none;height:0;padding:0;overflow:hidden}
 .search-box{position:relative}
 .search-wrap input{width:100%;padding:9px 70px 9px 14px;font-size:15px;border-radius:var(--r);border:0.5px solid var(--border);background:var(--bg2);color:var(--text);transition:border-color .2s,box-shadow .2s}
-.search-wrap input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(200,48,44,.25)}
+.search-wrap input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(212,175,55,.25)}
 .search-wrap input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
 .search-clear{position:absolute;top:50%;right:40px;transform:translateY(-50%) scale(0);width:22px;height:22px;border-radius:50%;border:none;background:var(--text3);color:var(--bg);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:transform .2s var(--spring);padding:0}
 .search-clear.visible{transform:translateY(-50%) scale(1)}
 .search-mic{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s var(--spring)}
 .search-mic:active{transform:translateY(-50%) scale(0.9)}
 .search-mic.recording{background:var(--purple);color:#fff;border-color:var(--purple);animation:micPulse 1s ease-in-out infinite}
-@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,48,44,.6)}50%{box-shadow:0 0 0 8px rgba(200,48,44,0)}}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.6)}50%{box-shadow:0 0 0 8px rgba(212,175,55,0)}}
 
 /* FILTER BAR */
 .filter-bar{padding:8px 16px;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
@@ -130,7 +145,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .fav-star.on{color:var(--gold-d)}
 .fav-star:active{transform:scale(0.85)}
 
-.ripple{position:absolute;border-radius:50%;background:rgba(200,48,44,.25);transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none}
+.ripple{position:absolute;border-radius:50%;background:rgba(212,175,55,.25);transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none}
 @keyframes rippleAnim{to{transform:scale(4);opacity:0}}
 
 .card-head{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:4px}
@@ -169,7 +184,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .ev-countdown{font-size:11px;color:var(--purple-d);margin-top:6px;font-weight:600}
 
 /* FAB */
-.fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:20px;width:56px;height:56px;border-radius:50%;background:var(--purple);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;transition:transform .3s var(--spring),box-shadow .3s;box-shadow:0 4px 20px rgba(200,48,44,.5)}
+.fab{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:20px;width:56px;height:56px;border-radius:50%;background:var(--purple);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;transition:transform .3s var(--spring),box-shadow .3s;box-shadow:0 4px 20px rgba(212,175,55,.5)}
 .fab:active{transform:scale(0.88)}
 .fab .fab-icon{display:inline-block;transition:transform .3s var(--spring)}
 .fab.open .fab-icon{transform:rotate(45deg)}
@@ -186,7 +201,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .sheet h2{font-size:18px;font-weight:700;margin-bottom:16px}
 .lbl{font-size:13px;color:var(--text2);display:block;margin-bottom:5px;margin-top:14px}
 .sheet input,.sheet select,.sheet textarea{width:100%;padding:10px 14px;font-size:15px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);appearance:none;font-family:inherit;transition:border-color .2s,box-shadow .2s}
-.sheet input:focus,.sheet select:focus,.sheet textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(200,48,44,.2)}
+.sheet input:focus,.sheet select:focus,.sheet textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(212,175,55,.2)}
 .sheet textarea{resize:vertical;min-height:80px}
 
 /* BUTTONS */
@@ -371,9 +386,118 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 </head>
 <body>
 
+<div class="ink-splatter" aria-hidden="true">
+<svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="inkblob" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.95"/>
+      <stop offset="60%" stop-color="#D4AF37" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Splatter top-right -->
+  <g transform="translate(320, 80) rotate(15)">
+    <ellipse cx="0" cy="0" rx="70" ry="55" fill="url(#inkblob)"/>
+    <circle cx="35" cy="-25" r="8" fill="#D4AF37"/>
+    <circle cx="-45" cy="30" r="5" fill="#D4AF37"/>
+    <circle cx="55" cy="35" r="3" fill="#D4AF37"/>
+    <ellipse cx="-30" cy="-35" rx="14" ry="4" fill="#D4AF37" transform="rotate(45 -30 -35)"/>
+    <circle cx="70" cy="-8" r="2" fill="#D4AF37"/>
+    <circle cx="-55" cy="-10" r="3" fill="#D4AF37"/>
+  </g>
+  <!-- Splatter middle-left -->
+  <g transform="translate(60, 350) rotate(-30)">
+    <ellipse cx="0" cy="0" rx="85" ry="55" fill="url(#inkblob)"/>
+    <circle cx="-30" cy="25" r="7" fill="#D4AF37"/>
+    <circle cx="40" cy="-18" r="10" fill="#D4AF37"/>
+    <ellipse cx="45" cy="35" rx="17" ry="5" fill="#D4AF37" transform="rotate(20 45 35)"/>
+    <circle cx="-45" cy="-25" r="4" fill="#D4AF37"/>
+    <circle cx="60" cy="12" r="2" fill="#D4AF37"/>
+  </g>
+  <!-- Splatter bottom-right -->
+  <g transform="translate(340, 650) rotate(60)">
+    <ellipse cx="0" cy="0" rx="60" ry="40" fill="url(#inkblob)" opacity="0.75"/>
+    <circle cx="-25" cy="18" r="5" fill="#D4AF37"/>
+    <circle cx="30" cy="-12" r="7" fill="#D4AF37"/>
+    <ellipse cx="-15" cy="-25" rx="10" ry="3" fill="#D4AF37"/>
+  </g>
+  <!-- Small dots scattered -->
+  <circle cx="130" cy="220" r="2" fill="#D4AF37"/>
+  <circle cx="290" cy="290" r="3" fill="#D4AF37"/>
+  <circle cx="210" cy="620" r="2" fill="#D4AF37"/>
+  <circle cx="90" cy="110" r="2" fill="#D4AF37"/>
+  <circle cx="180" cy="780" r="3" fill="#D4AF37"/>
+  <circle cx="270" cy="500" r="2" fill="#D4AF37"/>
+</svg>
+</div>
+
+<div class="wave-deco" aria-hidden="true">
+<svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="vermilion" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#c8312c" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="#c8312c" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#c8312c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="indigoSplash" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#1a3a5c" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#1a3a5c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Grande vague stylisée en haut -->
+  <g transform="translate(0, 30)" opacity="0.55">
+    <path d="M -20 60 Q 50 10 110 50 Q 170 80 230 35 Q 290 0 350 40 Q 410 70 430 35 L 430 -30 L -20 -30 Z" fill="#1a3a5c"/>
+    <path d="M -20 90 Q 50 50 110 80 Q 170 105 230 75 Q 290 45 350 75 Q 410 100 430 75 L 430 60 Q 410 95 350 70 Q 290 40 230 70 Q 170 100 110 75 Q 50 45 -20 85 Z" fill="#0c2238"/>
+    <!-- Crête écumeuse -->
+    <circle cx="80" cy="55" r="4" fill="#f5ede0"/>
+    <circle cx="95" cy="58" r="3" fill="#f5ede0"/>
+    <circle cx="170" cy="80" r="3" fill="#f5ede0"/>
+    <circle cx="260" cy="55" r="4" fill="#f5ede0"/>
+    <circle cx="280" cy="50" r="2" fill="#f5ede0"/>
+    <circle cx="360" cy="65" r="3" fill="#f5ede0"/>
+  </g>
+
+  <!-- Vague basse symétrique -->
+  <g transform="translate(0, 830) scale(1, -1)" opacity="0.45">
+    <path d="M -20 60 Q 60 20 130 55 Q 200 85 270 50 Q 340 15 430 45 L 430 -30 L -20 -30 Z" fill="#1a3a5c"/>
+    <circle cx="100" cy="50" r="3" fill="#f5ede0"/>
+    <circle cx="230" cy="75" r="3" fill="#f5ede0"/>
+    <circle cx="320" cy="40" r="4" fill="#f5ede0"/>
+  </g>
+
+  <!-- Éclaboussure vermillon principale (au milieu, légèrement gauche) -->
+  <g transform="translate(80, 380) rotate(-15)">
+    <ellipse cx="0" cy="0" rx="75" ry="50" fill="url(#vermilion)"/>
+    <circle cx="-40" cy="20" r="6" fill="#c8312c" opacity="0.75"/>
+    <circle cx="45" cy="-15" r="9" fill="#c8312c" opacity="0.8"/>
+    <ellipse cx="50" cy="35" rx="16" ry="5" fill="#c8312c" opacity="0.7" transform="rotate(25 50 35)"/>
+    <circle cx="-55" cy="-20" r="4" fill="#c8312c" opacity="0.75"/>
+    <circle cx="65" cy="15" r="3" fill="#c8312c" opacity="0.7"/>
+    <circle cx="-30" cy="-40" r="3" fill="#c8312c" opacity="0.65"/>
+  </g>
+
+  <!-- Petite éclaboussure indigo en bas droite -->
+  <g transform="translate(330, 600) rotate(35)">
+    <ellipse cx="0" cy="0" rx="55" ry="38" fill="url(#indigoSplash)"/>
+    <circle cx="-22" cy="18" r="5" fill="#1a3a5c" opacity="0.55"/>
+    <circle cx="30" cy="-12" r="7" fill="#1a3a5c" opacity="0.65"/>
+    <ellipse cx="-25" cy="-22" rx="10" ry="3" fill="#1a3a5c" opacity="0.5"/>
+  </g>
+
+  <!-- Gouttelettes vermillon dispersées -->
+  <circle cx="150" cy="200" r="3" fill="#c8312c" opacity="0.55"/>
+  <circle cx="270" cy="300" r="2" fill="#c8312c" opacity="0.6"/>
+  <circle cx="200" cy="500" r="2.5" fill="#c8312c" opacity="0.55"/>
+  <circle cx="110" cy="700" r="3" fill="#c8312c" opacity="0.5"/>
+  <circle cx="320" cy="220" r="2" fill="#c8312c" opacity="0.6"/>
+  <circle cx="50" cy="550" r="2" fill="#c8312c" opacity="0.55"/>
+</svg>
+</div>
+
 <div class="topbar">
   <div class="topbar-row">
-    <span class="app-title">🖋 Ink Factory</span>
+    <span class="app-title"><span class="title-feather left">🪶</span><span class="title-text">INK FACTORY</span><span class="title-feather right">🪶</span></span>
     <div class="topbar-actions">
       <button class="btn-sm" onclick="openStats()">📊 Stats</button>
       <button class="btn-sm" onclick="openMap()">🗺 Plan</button>
