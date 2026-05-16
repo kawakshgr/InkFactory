@@ -288,6 +288,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 
 /* SECTION HEADER */
 .section-header{font-size:13px;color:var(--text2);font-weight:600;margin:8px 0 4px;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
+
+/* MODE DISCRET — encore plus sombre, texte gris */
+body.dim{filter:brightness(0.55) contrast(0.95)}
+body.dim .topbar{background:#000}
+body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
+
+/* TODAY DASHBOARD */
+.today-wrap{padding:16px;padding-bottom:90px}
+.today-greet{text-align:center;margin-bottom:18px}
+.today-date{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.today-day{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-top:4px}
+.today-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.today-stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rl);padding:12px;text-align:center;cursor:pointer;transition:transform .15s var(--spring)}
+.today-stat:active{transform:scale(0.95)}
+.today-stat-val{font-size:22px;font-weight:800;color:var(--purple-d)}
+.today-stat-lbl{font-size:11px;color:var(--text2);margin-top:2px;font-weight:600}
+.today-section{margin-top:20px}
+.today-section h3{font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:10px;text-align:center}
+.today-next-ev{background:linear-gradient(135deg,var(--purple-l) 0%,#1a0606 100%);border:0.5px solid var(--purple);border-radius:var(--rl);padding:16px;margin-bottom:8px;text-align:center}
+.today-next-time{font-size:12px;color:var(--purple-d);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.today-next-title{font-size:17px;font-weight:700;margin-bottom:6px}
+.today-next-cd{font-size:13px;color:var(--purple-d);font-weight:600;margin-top:8px}
+.today-empty-mini{text-align:center;padding:20px;color:var(--text2);font-size:13px;background:var(--bg2);border-radius:var(--r);font-style:italic}
 </style>
 </head>
 <body>
@@ -299,12 +322,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <button class="btn-sm accent" onclick="openTour()">🚀 Tour</button>
       <button class="btn-sm" onclick="openImport()">📥 Import</button>
       <button class="btn-sm" onclick="openBackup()">💾 Données</button>
+      <button class="btn-sm" id="btn-dim" onclick="toggleDim()" title="Mode discret">🌙</button>
     </div>
   </div>
   <div class="tabs">
+    <button class="tab" id="tab-t" onclick="switchTab('today')">📍 Aujourd'hui</button>
     <button class="tab active" id="tab-a" onclick="switchTab('artists')">🎨 Artistes <span class="cnt" id="cnt-a">0</span></button>
     <button class="tab" id="tab-s" onclick="switchTab('shops')">🏪 Stands <span class="cnt" id="cnt-s">0</span></button>
-    <button class="tab" id="tab-e" onclick="switchTab('events')">📅 Événements <span class="cnt" id="cnt-e">0</span></button>
+    <button class="tab" id="tab-e" onclick="switchTab('events')">📅 Events <span class="cnt" id="cnt-e">0</span></button>
   </div>
 </div>
 
@@ -672,10 +697,10 @@ function toggleFav(id, ev) {
 // ─── TABS ───────────────────────────────────────────────
 function switchTab(t) {
   tab = t;
-  ['a','s','e'].forEach(x => document.getElementById('tab-'+x).classList.remove('active'));
-  document.getElementById('tab-'+{artists:'a',shops:'s',events:'e'}[t]).classList.add('active');
+  ['t','a','s','e'].forEach(x => document.getElementById('tab-'+x).classList.remove('active'));
+  document.getElementById('tab-'+{today:'t',artists:'a',shops:'s',events:'e'}[t]).classList.add('active');
   const sw = document.getElementById('search-wrap');
-  if (t === 'events') sw.classList.add('hidden'); else sw.classList.remove('hidden');
+  if (t === 'events' || t === 'today') sw.classList.add('hidden'); else sw.classList.remove('hidden');
   currentFilter = 'all';
   render();
 }
@@ -683,7 +708,7 @@ function switchTab(t) {
 // ─── FILTER BAR ─────────────────────────────────────────
 function renderFilterBar() {
   const bar = document.getElementById('filter-bar');
-  if (tab === 'events' || tab === 'shops') { bar.style.display = 'none'; return; }
+  if (tab === 'events' || tab === 'shops' || tab === 'today') { bar.style.display = 'none'; return; }
   bar.style.display = 'flex';
   const favCount = data.artists.filter(a => a.fav).length;
   const tags = getAllTags();
@@ -706,6 +731,8 @@ function render() {
 
   const q = (document.getElementById('search').value || '').toLowerCase();
   const list = document.getElementById('list');
+
+  if (tab === 'today') { renderToday(list); return; }
 
   if (tab === 'events') {
     const sorted = [...data.events].sort((a,b) => new Date(a.start||0) - new Date(b.start||0));
@@ -770,6 +797,113 @@ function render() {
       </div>
     </div>`;
   }).join('');
+}
+
+// ─── TODAY DASHBOARD ────────────────────────────────────
+function renderToday(list) {
+  const now = new Date();
+  const dayName = now.toLocaleDateString('fr-FR', {weekday:'long'});
+  const dayKey = ['sun','mon','tue','wed','thu','fri','sat'][now.getDay()];
+  // Map weekday to our AVAIL_DAYS keys (we only have fri/sat/sun)
+  const availDayKey = (dayKey === 'fri' || dayKey === 'sat' || dayKey === 'sun') ? dayKey : null;
+  const dateStr = now.toLocaleDateString('fr-FR', {day:'numeric', month:'long'});
+
+  const todayArtists = availDayKey ? data.artists.filter(a => a.avail && (a.avail[`${availDayKey}_am`] || a.avail[`${availDayKey}_pm`])) : [];
+  const todayEvents = data.events.filter(e => e.start && isToday(e.start)).sort((a,b) => new Date(a.start) - new Date(b.start));
+  const upcoming = todayEvents.filter(e => !isPast(e.end || e.start));
+  const nextEvent = upcoming[0];
+  const todayFavs = todayArtists.filter(a => a.fav);
+
+  let remCount = 0;
+  data.events.forEach(e => {
+    if (!e.start || !(e.reminders||[]).length) return;
+    e.reminders.forEach(o => {
+      const t = remFireTime(e.start, o);
+      if (isToday(t) && t > now) remCount++;
+    });
+  });
+
+  let html = `<div class="today-greet">
+    <div class="today-date">${dateStr}</div>
+    <div class="today-day">${dayName.charAt(0).toUpperCase() + dayName.slice(1)}</div>
+  </div>
+  <div class="today-stat-row">
+    <div class="today-stat" onclick="switchTab('artists')">
+      <div class="today-stat-val">${todayArtists.length || data.artists.length}</div>
+      <div class="today-stat-lbl">🎨 ${availDayKey ? 'Présents' : 'Artistes'}</div>
+    </div>
+    <div class="today-stat" onclick="switchTab('events')">
+      <div class="today-stat-val">${upcoming.length}</div>
+      <div class="today-stat-lbl">📅 À venir</div>
+    </div>
+    <div class="today-stat">
+      <div class="today-stat-val">${remCount}</div>
+      <div class="today-stat-lbl">⏰ Rappels</div>
+    </div>
+  </div>`;
+
+  if (nextEvent) {
+    const cd = fmtCountdown(nextEvent.start);
+    html += `<div class="today-section">
+      <h3>⏭ Prochain événement</h3>
+      <div class="today-next-ev" onclick="openDetail('${nextEvent.id}')" style="cursor:pointer">
+        <div class="today-next-time">${fmtDatetime(nextEvent.start)}</div>
+        <div class="today-next-title">${nextEvent.title}</div>
+        <div class="badges" style="justify-content:center">
+          ${nextEvent.cat ? `<span class="badge b-purple">${nextEvent.cat}</span>` : ''}
+          ${nextEvent.loc ? `<span class="badge b-amber">📍 ${nextEvent.loc}</span>` : ''}
+          ${nextEvent.artist ? `<span class="badge b-teal">🎨 ${nextEvent.artist}</span>` : ''}
+        </div>
+        ${cd ? `<div class="today-next-cd">⏳ ${cd}</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  if (todayEvents.length > 1) {
+    html += `<div class="today-section"><h3>📅 Autres événements du jour</h3>`;
+    todayEvents.filter(e => e.id !== nextEvent?.id).forEach(e => {
+      const past = isPast(e.end || e.start);
+      html += `<div class="ev-card" onclick="openDetail('${e.id}')" style="margin-bottom:8px">
+        <div class="ev-stripe ${past?'past':'upcoming'}"></div>
+        <div class="ev-body">
+          <div class="ev-time">${fmtDatetime(e.start)}</div>
+          <div class="ev-title">${e.title}</div>
+        </div></div>`;
+    });
+    html += `</div>`;
+  } else if (todayEvents.length === 0) {
+    html += `<div class="today-section"><h3>📅 Événements</h3><div class="today-empty-mini">Aucun événement prévu aujourd'hui</div></div>`;
+  }
+
+  if (todayFavs.length) {
+    html += `<div class="today-section"><h3>⭐ Favoris présents</h3>`;
+    todayFavs.forEach(a => {
+      const av = a.photo ? `<div class="avatar"><img src="${a.photo}" alt=""></div>` : `<div class="avatar av-a">${initials(a.name)}</div>`;
+      html += `<div class="card" onclick="openDetail('${a.id}')" style="margin-bottom:8px;text-align:center">
+        <div class="card-head">${av}<div><div class="card-name">${a.name}</div><div class="card-sub">${a.shop||''}</div></div></div>
+        <div class="badges">
+          ${a.style ? `<span class="badge b-purple">${a.style}</span>` : ''}
+          ${a.loc ? `<span class="badge b-amber">📍 ${a.loc}</span>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (!availDayKey) {
+    html += `<div class="today-section"><div class="today-empty-mini">💡 La convention a lieu du vendredi au dimanche. Reviens à ce moment-là pour voir les artistes présents en direct.</div></div>`;
+  }
+
+  list.innerHTML = html;
+}
+
+// ─── DIM MODE ───────────────────────────────────────────
+function toggleDim() {
+  document.body.classList.toggle('dim');
+  const isDim = document.body.classList.contains('dim');
+  document.getElementById('btn-dim').textContent = isDim ? '☀️' : '🌙';
+  try { localStorage.setItem('dim-mode', isDim ? '1' : '0'); } catch(e){}
+  toast(isDim ? '🌙 Mode discret activé' : '☀️ Mode normal');
 }
 
 function rippleAndOpen(el, e, id) {
@@ -1304,9 +1438,15 @@ function importBackup(input) {
 }
 
 // ─── INIT ───────────────────────────────────────────────
+try {
+  if (localStorage.getItem('dim-mode') === '1') {
+    document.body.classList.add('dim');
+    document.getElementById('btn-dim').textContent = '☀️';
+  }
+} catch(e){}
 loadData();
 // Refresh countdowns every minute
-setInterval(() => { if (tab === 'events') render(); }, 60000);
+setInterval(() => { if (tab === 'events' || tab === 'today') render(); }, 60000);
 </script>
 </body>
 </html>
