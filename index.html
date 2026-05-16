@@ -27,6 +27,53 @@ html,body{touch-action:manipulation}
   --spring:cubic-bezier(0.34,1.56,0.64,1);
   --ease-out:cubic-bezier(0.22,1,0.36,1);
 }
+
+/* THEME IREZUMI — papier ancien, indigo profond, vermillon */
+body.irezumi{
+  --bg:#f5ede0;
+  --bg2:#ebe0ce;
+  --bg3:#e8dbc4;
+  --text:#1a1818;
+  --text2:#6b5d4a;
+  --text3:#a89476;
+  --border:rgba(60,40,20,0.18);
+  --border2:rgba(60,40,20,0.32);
+  --purple:#c8312c;
+  --purple-l:#f5d8d3;
+  --purple-d:#8b1a1a;
+  --teal-l:#dde6dc;
+  --teal-d:#2a4f3a;
+  --amber-l:#f3e6c4;
+  --amber-d:#7a5a1a;
+  --blue-l:#d9e2ed;
+  --blue-d:#1a3a5c;
+  --green-l:#dde6c8;
+  --green-d:#3a5e0a;
+  --gold-l:#f0e4c0;
+  --gold-d:#6b4e0a;
+  --red:#a01818;
+  --green:#3a5e0a;
+}
+body.irezumi .topbar{background:#fbf6ec;border-bottom:0.5px solid var(--border)}
+body.irezumi .ripple{background:rgba(200,49,44,.15)}
+body.irezumi .fab{box-shadow:0 4px 20px rgba(139,26,26,.35)}
+body.irezumi .search-wrap input:focus,
+body.irezumi .sheet input:focus,
+body.irezumi .sheet select:focus,
+body.irezumi .sheet textarea:focus{box-shadow:0 0 0 3px rgba(200,49,44,.15)}
+body.irezumi .av-a{background:#1a3a5c;color:#f5ede0}
+body.irezumi .av-s{background:#2a4f3a;color:#f5ede0}
+body.irezumi .b-purple{background:#1a3a5c;color:#f5ede0}
+body.irezumi .b-teal{background:#c8312c;color:#fbf6ec}
+body.irezumi .tag-pill{background:var(--gold-l);color:var(--gold-d)}
+body.irezumi .ev-stripe.upcoming{background:#1a3a5c}
+body.irezumi .ev-stripe.today{background:#c8312c}
+body.irezumi .ov-bg{background:rgba(0,0,0,0.55)}
+body.irezumi .toast{background:#1a1818;color:#f5ede0}
+body.irezumi .pres-section{background:#f3e6c4;border-color:#a87d1a}
+body.irezumi .pres-section .lbl{color:#7a5a1a}
+body.irezumi .stat-bar-fill{background:linear-gradient(90deg,#1a3a5c 0%,#c8312c 100%)}
+body.irezumi .ev-countdown,body.irezumi .today-next-cd{color:#8b1a1a}
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;overflow-x:hidden}
 
 /* TOPBAR */
@@ -265,11 +312,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 /* SECTION HEADER */
 .section-header{font-size:13px;color:var(--text2);font-weight:600;margin:8px 0 4px;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
 
-/* MODE DISCRET — encore plus sombre, texte gris */
-body.dim{filter:brightness(0.55) contrast(0.95)}
-body.dim .topbar{background:#000}
-body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
-
 /* TODAY DASHBOARD */
 .today-wrap{padding:16px;padding-bottom:90px}
 .today-greet{text-align:center;margin-bottom:18px}
@@ -337,7 +379,7 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
       <button class="btn-sm" onclick="openMap()">🗺 Plan</button>
       <button class="btn-sm" onclick="openImport()">📥 Import</button>
       <button class="btn-sm" onclick="openBackup()">💾 Données</button>
-      <button class="btn-sm" id="btn-dim" onclick="toggleDim()" title="Mode discret">🌙</button>
+      <button class="btn-sm" id="btn-theme" onclick="toggleTheme()" title="Changer de thème">🌊</button>
     </div>
   </div>
   <div class="tabs">
@@ -934,13 +976,15 @@ function renderToday(list) {
   list.innerHTML = html;
 }
 
-// ─── DIM MODE ───────────────────────────────────────────
-function toggleDim() {
-  document.body.classList.toggle('dim');
-  const isDim = document.body.classList.contains('dim');
-  document.getElementById('btn-dim').textContent = isDim ? '☀️' : '🌙';
-  try { localStorage.setItem('dim-mode', isDim ? '1' : '0'); } catch(e){}
-  toast(isDim ? '🌙 Mode discret activé' : '☀️ Mode normal');
+// ─── THEME SWITCH ───────────────────────────────────────
+function toggleTheme() {
+  const isIrezumi = document.body.classList.toggle('irezumi');
+  document.getElementById('btn-theme').textContent = isIrezumi ? '🌑' : '🌊';
+  // Update iOS status bar color
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.setAttribute('content', isIrezumi ? '#fbf6ec' : '#000000');
+  try { localStorage.setItem('theme', isIrezumi ? 'irezumi' : 'studio'); } catch(e){}
+  toast(isIrezumi ? '🌊 Thème Irezumi' : '🖤 Thème Studio Pro');
 }
 
 // ─── STATS ──────────────────────────────────────────────
@@ -1612,9 +1656,11 @@ function importBackup(input) {
 
 // ─── INIT ───────────────────────────────────────────────
 try {
-  if (localStorage.getItem('dim-mode') === '1') {
-    document.body.classList.add('dim');
-    document.getElementById('btn-dim').textContent = '☀️';
+  if (localStorage.getItem('theme') === 'irezumi') {
+    document.body.classList.add('irezumi');
+    document.getElementById('btn-theme').textContent = '🌑';
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) themeMeta.setAttribute('content', '#fbf6ec');
   }
 } catch(e){}
 loadData();
