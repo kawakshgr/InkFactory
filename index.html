@@ -10,6 +10,8 @@
 <title>Ink Factory</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{touch-action:manipulation}
+.card,.ev-card,.tab,.btn-sm,.fab,.filter-chip,button{touch-action:manipulation}
 :root{
   --bg:#000000;--bg2:#0f0f0f;--bg3:#000000;
   --text:#f0f0f0;--text2:#8a8a8a;--text3:#555555;
@@ -76,6 +78,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 
 /* CARDS */
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;cursor:pointer;animation:cardIn .3s var(--ease-out) both;position:relative;overflow:hidden;text-align:center}
+.list.no-anim .card,.list.no-anim .ev-card{animation:none!important}
 .card:active{transform:scale(0.97)}
 @keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .card.removing{animation:cardOut .25s var(--ease-out) forwards}
@@ -370,7 +373,6 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
   <div class="topbar-row">
     <span class="app-title">🖋 Ink Factory</span>
     <div class="topbar-actions">
-      <button class="btn-sm accent" onclick="openTour()">🚀 Tour</button>
       <button class="btn-sm" onclick="openStats()">📊 Stats</button>
       <button class="btn-sm" onclick="openMap()">🗺 Plan</button>
       <button class="btn-sm" onclick="openImport()">📥 Import</button>
@@ -831,7 +833,7 @@ function render() {
       const sc = past ? 'past' : today ? 'today' : 'upcoming';
       const rc = (x.reminders||[]).length;
       const cd = !past && x.start ? fmtCountdown(x.start) : '';
-      return `<div class="ev-card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
+      return `<div class="ev-card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${Math.min(i,7)*0.04}s">
         <div class="ev-stripe ${sc}"></div>
         <div class="ev-body">
           <div class="ev-time">${x.start ? fmtDatetime(x.start) : 'Pas de date'}</div>
@@ -855,17 +857,26 @@ function render() {
     if (currentFilter === 'fav') items = items.filter(a => a.fav);
     else if (currentFilter !== 'all') items = items.filter(a => (a.tags||[]).includes(currentFilter));
   }
-  items = items.filter(x => JSON.stringify(x).toLowerCase().includes(q));
+  // Only filter by search if there's actually a query (saves a lot of work with 287+ entries)
+  if (q) {
+    items = items.filter(x => {
+      // Search only relevant text fields, not photo data URLs
+      const haystack = `${x.name||''} ${x.style||''} ${x.nat||''} ${x.loc||''} ${x.shop||''} ${x.city||''} ${x.spec||''} ${x.insta||''} ${x.contact||''} ${x.notes||''} ${x.pres||''} ${x.pron||''} ${(x.tags||[]).join(' ')}`.toLowerCase();
+      return haystack.includes(q);
+    });
+  }
 
   if (!items.length) {
     list.innerHTML = `<div class="empty"><span class="empty-icon">👻</span>Aucun résultat.<br>Appuie sur <strong>＋</strong> pour ajouter.</div>`;
     return;
   }
+  // Disable animations on big lists to keep tap responsive
+  list.classList.toggle('no-anim', items.length > 20);
   list.innerHTML = items.map((x,i) => {
     const av = x.photo ? `<div class="avatar"><img src="${x.photo}" alt=""></div>` : `<div class="avatar ${x.type==='artist'?'av-a':'av-s'}">${initials(x.name)}</div>`;
     const star = `<button class="fav-star ${x.fav?'on':''}" onclick="toggleFav('${x.id}',event)" aria-label="Favori">${x.fav?'★':'☆'}</button>`;
     const tags = (x.tags||[]).length ? `<div class="tag-badges">${x.tags.map(t=>`<span class="tag-pill">🏷 ${t}</span>`).join('')}</div>` : '';
-    if (x.type === 'artist') return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
+    if (x.type === 'artist') return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${Math.min(i,7)*0.04}s">
       ${star}
       <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.shop||''}</div></div></div>
       <div class="badges">
@@ -876,7 +887,7 @@ function render() {
       ${availSummary(x.avail).length ? `<div class="avail-badges">${availSummary(x.avail).map(s=>`<span class="avail-pill">${s}</span>`).join('')}</div>` : ''}
       ${tags}
     </div>`;
-    return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${i*0.04}s">
+    return `<div class="card" onclick="rippleAndOpen(this,event,'${x.id}')" style="animation-delay:${Math.min(i,7)*0.04}s">
       ${star}
       <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.city||''}</div></div></div>
       <div class="badges">
@@ -1318,7 +1329,7 @@ function rippleAndOpen(el, e, id) {
   ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
   el.appendChild(ripple);
   setTimeout(() => ripple.remove(), 600);
-  setTimeout(() => openDetail(id), 120);
+  openDetail(id); // open immediately, no artificial delay
 }
 
 function popCnt(id) {
