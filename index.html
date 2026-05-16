@@ -247,15 +247,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* MODE PRÉSENTATION PLEIN ÉCRAN */
-#present-overlay{display:none;position:fixed;inset:0;z-index:400;background:#000;padding:env(safe-area-inset-top,20px) 20px 20px;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#present-overlay{display:none;position:fixed;inset:0;z-index:400;background:#000;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 #present-overlay.show{display:flex}
-.present-close{position:absolute;top:env(safe-area-inset-top,20px);right:20px;background:transparent;border:0.5px solid var(--border2);color:var(--text);padding:8px 14px;font-size:13px;border-radius:var(--r);cursor:pointer}
-.present-avatar{width:140px;height:140px;border-radius:50%;background:var(--purple-l);color:var(--purple-d);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:700;margin-bottom:24px;overflow:hidden}
-.present-avatar img{width:100%;height:100%;object-fit:cover}
-.present-name{font-size:34px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
-.present-pron{font-size:18px;color:var(--gold-d);font-style:italic;margin-bottom:8px}
-.present-meta{font-size:15px;color:var(--text2);margin-bottom:24px}
-.present-pres{font-size:17px;line-height:1.6;background:var(--bg2);border-radius:var(--r);padding:18px;max-width:600px;color:var(--text)}
+.present-bg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(40px) brightness(0.35) saturate(1.2);transform:scale(1.15);z-index:0}
+.present-bg-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.85) 100%);z-index:0}
+.present-inner{position:relative;z-index:2;width:100%;max-width:500px;padding:env(safe-area-inset-top,20px) 20px 20px;display:flex;flex-direction:column;align-items:center}
+.present-close{position:absolute;top:calc(env(safe-area-inset-top,20px) + 8px);right:16px;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.15);color:#fff;padding:8px 14px;font-size:13px;border-radius:var(--r);cursor:pointer;z-index:10}
+.present-photo{width:min(70vw,260px);aspect-ratio:1/1;border-radius:18px;background:var(--purple-l);color:var(--purple-d);display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;margin-bottom:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.08)}
+.present-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.present-name{font-size:clamp(26px,7vw,38px);font-weight:800;margin-bottom:6px;letter-spacing:-0.5px;text-shadow:0 2px 12px rgba(0,0,0,0.6);line-height:1.1}
+.present-pron{font-size:clamp(15px,4vw,19px);color:var(--gold-d);font-style:italic;margin-bottom:10px;text-shadow:0 2px 8px rgba(0,0,0,0.7)}
+.present-meta{font-size:clamp(13px,3.5vw,16px);color:rgba(255,255,255,0.75);margin-bottom:20px;text-shadow:0 2px 8px rgba(0,0,0,0.7)}
+.present-pres{font-size:clamp(15px,4vw,18px);line-height:1.55;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:var(--rl);padding:18px 20px;max-width:600px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
 
 /* TODAY DASHBOARD - placeholder for next lot */
 
@@ -519,8 +522,10 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
 
 <!-- PRESENTATION MODE -->
 <div id="present-overlay">
+  <div class="present-bg" id="present-bg"></div>
+  <div class="present-bg-overlay"></div>
   <button class="present-close" onclick="closePresent()">✕ Fermer</button>
-  <div id="present-content"></div>
+  <div class="present-inner" id="present-content"></div>
 </div>
 
 <!-- STATS -->
@@ -1476,16 +1481,28 @@ function deleteEntry(id) {
 // ─── PRESENT MODE ───────────────────────────────────────
 function openPresent(id) {
   const a = data.artists.find(x => x.id === id); if (!a) return;
-  const av = a.photo ? `<div class="present-avatar"><img src="${a.photo}" alt=""></div>` : `<div class="present-avatar">${initials(a.name)}</div>`;
+  const photo = a.photo
+    ? `<div class="present-photo"><img src="${a.photo}" alt=""></div>`
+    : `<div class="present-photo">${initials(a.name)}</div>`;
   const meta = [a.style, a.nat, a.loc].filter(Boolean).join(' · ');
+
+  // Blurred background: use photo if available, else a dark gradient
+  const bg = document.getElementById('present-bg');
+  if (a.photo) {
+    bg.style.backgroundImage = `url("${a.photo}")`;
+    bg.style.background = `url("${a.photo}") center/cover no-repeat`;
+  } else {
+    bg.style.background = `radial-gradient(circle at 30% 20%, var(--purple-l) 0%, #000 70%)`;
+  }
+
   document.getElementById('present-content').innerHTML = `
-    ${av}
+    ${photo}
     <div class="present-name">${a.name}</div>
     ${a.pron ? `<div class="present-pron">🗣 ${a.pron}</div>` : ''}
     ${meta ? `<div class="present-meta">${meta}</div>` : ''}
-    ${a.pres ? `<div class="present-pres">${a.pres}</div>` : '<div style="color:var(--text2);font-style:italic">Pas de pitch de présentation enregistré</div>'}`;
+    ${a.pres ? `<div class="present-pres">${a.pres}</div>` : '<div style="color:rgba(255,255,255,0.6);font-style:italic">Pas de pitch de présentation enregistré</div>'}`;
   document.getElementById('present-overlay').classList.add('show');
-  // Try to lock screen orientation, request wake lock
+  // Request wake lock to keep screen on
   try { if ('wakeLock' in navigator) navigator.wakeLock.request('screen'); } catch(e){}
 }
 function closePresent() { document.getElementById('present-overlay').classList.remove('show'); }
