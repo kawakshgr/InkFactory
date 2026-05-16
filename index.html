@@ -311,6 +311,57 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
 .today-next-title{font-size:17px;font-weight:700;margin-bottom:6px}
 .today-next-cd{font-size:13px;color:var(--purple-d);font-weight:600;margin-top:8px}
 .today-empty-mini{text-align:center;padding:20px;color:var(--text2);font-size:13px;background:var(--bg2);border-radius:var(--r);font-style:italic}
+
+/* STATS */
+.stat-section{margin-top:18px}
+.stat-section h3{font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;margin-bottom:10px}
+.stat-big-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stat-big{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;text-align:center}
+.stat-big-val{font-size:28px;font-weight:800;color:var(--purple-d);line-height:1}
+.stat-big-lbl{font-size:11px;color:var(--text2);margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.stat-bar-row{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px}
+.stat-bar-lbl{flex:0 0 110px;color:var(--text2)}
+.stat-bar-wrap{flex:1;height:18px;background:var(--bg2);border-radius:9px;overflow:hidden}
+.stat-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple) 0%,var(--purple-d) 100%);border-radius:9px;transition:width .6s var(--ease-out);min-width:2px}
+.stat-bar-val{flex:0 0 30px;text-align:right;font-weight:700;color:var(--text)}
+
+/* MAP */
+.map-container{background:var(--bg2);border-radius:var(--rl);padding:14px;margin-top:14px}
+.map-svg{width:100%;background:#0a0a0a;border-radius:var(--r);display:block}
+.map-stand{cursor:pointer;transition:opacity .2s}
+.map-stand:hover{opacity:0.85}
+.map-stand-rect{fill:var(--bg2);stroke:var(--border2);stroke-width:0.5}
+.map-stand-rect.has-fav{fill:var(--gold-l);stroke:var(--gold-d);stroke-width:1}
+.map-stand-rect.has-artist{fill:var(--purple-l);stroke:var(--purple-d)}
+.map-stand-label{fill:var(--text);font-size:8px;font-weight:600;text-anchor:middle;pointer-events:none;font-family:-apple-system,sans-serif}
+.map-hall-label{fill:var(--text2);font-size:11px;font-weight:700;text-anchor:middle;text-transform:uppercase;letter-spacing:1px;font-family:-apple-system,sans-serif}
+.map-stage{fill:var(--purple-l);stroke:var(--purple);stroke-width:0.5}
+.map-entry{fill:var(--green-l);stroke:var(--green-d);stroke-width:0.5}
+.map-zone-label{fill:var(--text);font-size:9px;font-weight:600;text-anchor:middle;font-family:-apple-system,sans-serif}
+.map-info{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:10px;margin-top:10px;font-size:13px;text-align:center;color:var(--text2);min-height:24px}
+.map-legend{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap;font-size:11px;color:var(--text2)}
+.map-legend span{display:flex;align-items:center;gap:5px}
+.map-legend .swatch{width:12px;height:12px;border-radius:3px;display:inline-block}
+.map-input-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.map-input-row input{flex:1;padding:8px 12px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text)}
+
+/* SHARE CARD */
+.share-preview-wrap{background:var(--bg2);border-radius:var(--rl);padding:20px;margin-top:14px;display:flex;justify-content:center}
+.share-card{width:280px;background:#000;border:1px solid #222;border-radius:18px;padding:24px;text-align:center;position:relative;overflow:hidden}
+.share-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--purple),var(--purple-d))}
+.share-card-brand{font-size:10px;color:var(--purple-d);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.share-card-avatar{width:80px;height:80px;border-radius:50%;background:var(--purple-l);color:var(--purple-d);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 12px;overflow:hidden}
+.share-card-avatar img{width:100%;height:100%;object-fit:cover}
+.share-card-name{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px}
+.share-card-shop{font-size:12px;color:#888;margin-bottom:10px}
+.share-card-badges{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:10px}
+.share-card-badge{font-size:10px;padding:3px 8px;border-radius:20px;background:#1a1a1a;color:#bbb;font-weight:500}
+.share-card-foot{margin-top:14px;padding-top:14px;border-top:0.5px solid #222;font-size:9px;color:#666;letter-spacing:1px;text-transform:uppercase}
+
+/* HISTORY */
+.history-row{display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bg2);border-radius:var(--r);margin-bottom:6px;font-size:13px}
+.history-icon{margin-right:8px}
+.history-time{color:var(--text3);font-size:11px}
 </style>
 </head>
 <body>
@@ -320,6 +371,8 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
     <span class="app-title">🖋 Ink Factory</span>
     <div class="topbar-actions">
       <button class="btn-sm accent" onclick="openTour()">🚀 Tour</button>
+      <button class="btn-sm" onclick="openStats()">📊 Stats</button>
+      <button class="btn-sm" onclick="openMap()">🗺 Plan</button>
       <button class="btn-sm" onclick="openImport()">📥 Import</button>
       <button class="btn-sm" onclick="openBackup()">💾 Données</button>
       <button class="btn-sm" id="btn-dim" onclick="toggleDim()" title="Mode discret">🌙</button>
@@ -500,6 +553,9 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
       <label class="btn-backup btn-import-bk" for="bk-file" style="display:flex;align-items:center;justify-content:center;cursor:pointer">⬆️ Importer</label>
       <input type="file" id="bk-file" accept=".json" style="display:none" onchange="importBackup(this)">
     </div>
+    <div class="tip-box" style="margin-top:14px;font-size:12px">
+      <strong>☁️ Sync iCloud Drive :</strong> à l'export, choisis "Enregistrer dans Fichiers" → <strong>iCloud Drive</strong>. Sur tes autres appareils Apple, ouvre l'app et importe depuis ce même dossier. Tes données suivent automatiquement.
+    </div>
     <div id="bk-stats" style="margin-top:14px;font-size:13px;color:var(--text2);text-align:center"></div>
     <button class="btn-full btn-close" onclick="closeAll()" style="margin-top:16px">Fermer</button>
   </div>
@@ -524,6 +580,30 @@ body.dim .card,body.dim .ev-card,body.dim .sheet{background:#070707}
 <div id="present-overlay">
   <button class="present-close" onclick="closePresent()">✕ Fermer</button>
   <div id="present-content"></div>
+</div>
+
+<!-- STATS -->
+<div class="overlay" id="ov-stats">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet" id="stats-content"></div>
+</div>
+
+<!-- MAP -->
+<div class="overlay" id="ov-map">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet" id="map-content"></div>
+</div>
+
+<!-- SHARE -->
+<div class="overlay" id="ov-share">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet" id="share-content"></div>
+</div>
+
+<!-- HISTORY -->
+<div class="overlay" id="ov-history">
+  <div class="ov-bg" onclick="closeAll()"></div>
+  <div class="sheet" id="history-content"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -561,6 +641,14 @@ function loadData() {
 }
 function saveData() {
   try { localStorage.setItem(STORE, JSON.stringify(data)); } catch(e){ toast('❌ Erreur'); }
+}
+function logHistory(action, entityName, entityType) {
+  try {
+    let hist = JSON.parse(localStorage.getItem('history') || '[]');
+    hist.unshift({ action, name: entityName, type: entityType, at: Date.now() });
+    hist = hist.slice(0, 50);
+    localStorage.setItem('history', JSON.stringify(hist));
+  } catch(e){}
 }
 
 // ─── UTILS ──────────────────────────────────────────────
@@ -906,6 +994,320 @@ function toggleDim() {
   toast(isDim ? '🌙 Mode discret activé' : '☀️ Mode normal');
 }
 
+// ─── STATS ──────────────────────────────────────────────
+function openStats() {
+  const arts = data.artists;
+  const total = arts.length;
+
+  // Nationalities
+  const natCount = {};
+  arts.forEach(a => { if (a.nat) natCount[a.nat] = (natCount[a.nat]||0)+1; });
+  const topNats = Object.entries(natCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  // Styles
+  const styleCount = {};
+  arts.forEach(a => {
+    (a.style||'').split(/[,;/]/).forEach(s => {
+      s = s.trim(); if (s) styleCount[s] = (styleCount[s]||0)+1;
+    });
+  });
+  const topStyles = Object.entries(styleCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  // Days
+  const dayCount = { fri:0, sat:0, sun:0 };
+  arts.forEach(a => {
+    if (!a.avail) return;
+    if (a.avail.fri_am || a.avail.fri_pm) dayCount.fri++;
+    if (a.avail.sat_am || a.avail.sat_pm) dayCount.sat++;
+    if (a.avail.sun_am || a.avail.sun_pm) dayCount.sun++;
+  });
+
+  // Favs + tags
+  const favCount = arts.filter(a => a.fav).length;
+  const taggedCount = arts.filter(a => (a.tags||[]).length).length;
+
+  // Maxes for bars
+  const maxNat = topNats[0]?.[1] || 1;
+  const maxStyle = topStyles[0]?.[1] || 1;
+  const maxDay = Math.max(dayCount.fri, dayCount.sat, dayCount.sun, 1);
+
+  let html = `<div class="handle"></div>
+    <h2>📊 Vue d'ensemble</h2>
+    <div class="stat-big-row">
+      <div class="stat-big"><div class="stat-big-val">${total}</div><div class="stat-big-lbl">Artistes</div></div>
+      <div class="stat-big"><div class="stat-big-val">${data.shops.length}</div><div class="stat-big-lbl">Stands</div></div>
+      <div class="stat-big"><div class="stat-big-val">${data.events.length}</div><div class="stat-big-lbl">Events</div></div>
+    </div>
+    <div class="stat-big-row">
+      <div class="stat-big"><div class="stat-big-val" style="color:var(--gold-d)">${favCount}</div><div class="stat-big-lbl">⭐ Favoris</div></div>
+      <div class="stat-big"><div class="stat-big-val" style="color:var(--gold-d)">${taggedCount}</div><div class="stat-big-lbl">🏷 Tagués</div></div>
+      <div class="stat-big"><div class="stat-big-val" style="color:var(--green-d)">${Object.keys(natCount).length}</div><div class="stat-big-lbl">🌍 Pays</div></div>
+    </div>`;
+
+  if (dayCount.fri || dayCount.sat || dayCount.sun) {
+    html += `<div class="stat-section"><h3>📅 Présence par jour</h3>`;
+    [['Vendredi','fri'],['Samedi','sat'],['Dimanche','sun']].forEach(([lbl,k]) => {
+      const pct = (dayCount[k]/maxDay)*100;
+      html += `<div class="stat-bar-row"><span class="stat-bar-lbl">${lbl}</span><div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${pct}%"></div></div><span class="stat-bar-val">${dayCount[k]}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (topNats.length) {
+    html += `<div class="stat-section"><h3>🌍 Top nationalités</h3>`;
+    topNats.forEach(([nat,cnt]) => {
+      const pct = (cnt/maxNat)*100;
+      html += `<div class="stat-bar-row"><span class="stat-bar-lbl">${nat}</span><div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${pct}%"></div></div><span class="stat-bar-val">${cnt}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (topStyles.length) {
+    html += `<div class="stat-section"><h3>🎨 Top styles</h3>`;
+    topStyles.forEach(([st,cnt]) => {
+      const pct = (cnt/maxStyle)*100;
+      html += `<div class="stat-bar-row"><span class="stat-bar-lbl">${st}</span><div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${pct}%"></div></div><span class="stat-bar-val">${cnt}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<button class="btn-full" style="background:var(--blue-l);color:var(--blue-d);border:0.5px solid var(--blue-d);margin-top:16px" onclick="openHistory()">🕐 Voir l'historique</button>
+    <button class="btn-full btn-close" onclick="closeAll()">Fermer</button>`;
+
+  document.getElementById('stats-content').innerHTML = html;
+  document.getElementById('ov-stats').classList.add('show');
+}
+
+// ─── HISTORY ────────────────────────────────────────────
+function openHistory() {
+  let hist = [];
+  try { hist = JSON.parse(localStorage.getItem('history') || '[]'); } catch(e){}
+  let html = `<div class="handle"></div><h2>🕐 Historique des modifications</h2>`;
+  if (!hist.length) {
+    html += `<div class="today-empty-mini">Aucune modification enregistrée pour l'instant.</div>`;
+  } else {
+    html += `<p style="font-size:13px;color:var(--text2);margin-bottom:12px">Les 50 dernières modifications :</p>`;
+    hist.forEach(h => {
+      const icon = h.action==='Créé'?'✨':h.action==='Modifié'?'✏️':h.action==='Supprimé'?'🗑':'•';
+      const typeEmoji = h.type==='artist'?'🎨':h.type==='shop'?'🏪':h.type==='event'?'📅':'';
+      const ago = fmtAgo(h.at);
+      html += `<div class="history-row">
+        <span><span class="history-icon">${icon}</span><strong>${h.action}</strong> ${typeEmoji} ${h.name}</span>
+        <span class="history-time">${ago}</span>
+      </div>`;
+    });
+  }
+  html += `<button class="btn-full btn-close" onclick="closeAll()">Fermer</button>`;
+  document.getElementById('history-content').innerHTML = html;
+  document.getElementById('ov-history').classList.add('show');
+}
+function fmtAgo(ts) {
+  const diff = Date.now() - ts;
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return "à l'instant";
+  if (min < 60) return `il y a ${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `il y a ${h}h`;
+  const d = Math.floor(h / 24);
+  return `il y a ${d}j`;
+}
+
+// ─── MAP ────────────────────────────────────────────────
+const MAP_CONFIG = {
+  width: 380,
+  height: 480,
+  halls: [
+    { id:'A', x:20, y:50, w:160, h:180, label:'HALL A' },
+    { id:'B', x:200, y:50, w:160, h:180, label:'HALL B' },
+    { id:'C', x:20, y:260, w:340, h:140, label:'HALL C' },
+  ],
+  stage: { x:140, y:415, w:100, h:50, label:'SCÈNE' },
+  entry: { x:170, y:5, w:40, h:25, label:'ENTRÉE' },
+};
+function genStandsForHall(hall) {
+  const stands = [];
+  const cols = 4, rows = 4;
+  const padX = 8, padY = 24;
+  const cellW = (hall.w - padX*2) / cols;
+  const cellH = (hall.h - padY - 8) / rows;
+  for (let r=0; r<rows; r++) {
+    for (let c=0; c<cols; c++) {
+      const num = r * cols + c + 1;
+      stands.push({
+        id: `${hall.id}${num.toString().padStart(2,'0')}`,
+        x: hall.x + padX + c*cellW + 2,
+        y: hall.y + padY + r*cellH + 2,
+        w: cellW - 4, h: cellH - 4,
+      });
+    }
+  }
+  return stands;
+}
+function findArtistsForStand(standId) {
+  return data.artists.filter(a => (a.loc||'').toLowerCase().includes(standId.toLowerCase()));
+}
+function openMap() {
+  let html = `<div class="handle"></div><h2>🗺 Plan du salon</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px;text-align:center">Tape un stand pour voir l'artiste qui y est. Les stands en violet ont un artiste, en or contiennent un favori.</p>`;
+
+  // Build SVG
+  let svg = `<svg class="map-svg" viewBox="0 0 ${MAP_CONFIG.width} ${MAP_CONFIG.height}" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Entrée
+  svg += `<rect class="map-entry" x="${MAP_CONFIG.entry.x}" y="${MAP_CONFIG.entry.y}" width="${MAP_CONFIG.entry.w}" height="${MAP_CONFIG.entry.h}" rx="4"/>`;
+  svg += `<text class="map-zone-label" x="${MAP_CONFIG.entry.x + MAP_CONFIG.entry.w/2}" y="${MAP_CONFIG.entry.y + MAP_CONFIG.entry.h/2 + 3}">ENTRÉE</text>`;
+
+  // Halls
+  MAP_CONFIG.halls.forEach(hall => {
+    svg += `<rect x="${hall.x}" y="${hall.y}" width="${hall.w}" height="${hall.h}" fill="none" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--border2')}" stroke-width="1" rx="6"/>`;
+    svg += `<text class="map-hall-label" x="${hall.x + hall.w/2}" y="${hall.y + 15}">${hall.label}</text>`;
+
+    const stands = genStandsForHall(hall);
+    stands.forEach(s => {
+      const arts = findArtistsForStand(s.id);
+      const hasFav = arts.some(a => a.fav);
+      const cls = hasFav ? 'has-fav' : arts.length ? 'has-artist' : '';
+      svg += `<g class="map-stand" onclick="mapShowStand('${s.id}')">
+        <rect class="map-stand-rect ${cls}" x="${s.x}" y="${s.y}" width="${s.w}" height="${s.h}" rx="3"/>
+        <text class="map-stand-label" x="${s.x + s.w/2}" y="${s.y + s.h/2 + 3}">${s.id}</text>
+      </g>`;
+    });
+  });
+
+  // Scène
+  svg += `<rect class="map-stage" x="${MAP_CONFIG.stage.x}" y="${MAP_CONFIG.stage.y}" width="${MAP_CONFIG.stage.w}" height="${MAP_CONFIG.stage.h}" rx="6"/>`;
+  svg += `<text class="map-zone-label" x="${MAP_CONFIG.stage.x + MAP_CONFIG.stage.w/2}" y="${MAP_CONFIG.stage.y + MAP_CONFIG.stage.h/2 + 3}">SCÈNE</text>`;
+
+  svg += `</svg>`;
+
+  html += `<div class="map-container">${svg}
+    <div class="map-info" id="map-info">Aucun stand sélectionné</div>
+    <div class="map-legend">
+      <span><span class="swatch" style="background:var(--bg2);border:1px solid var(--border2)"></span> Vide</span>
+      <span><span class="swatch" style="background:var(--purple-l);border:1px solid var(--purple-d)"></span> Artiste</span>
+      <span><span class="swatch" style="background:var(--gold-l);border:1px solid var(--gold-d)"></span> Favori</span>
+    </div>
+  </div>
+  <div class="tip-box" style="margin-top:14px;font-size:12px">💡 Pour qu'un stand soit lié à un artiste, indique son emplacement (ex : "Hall A – A05" ou "A05") dans la fiche artiste.</div>
+  <button class="btn-full btn-close" onclick="closeAll()" style="margin-top:14px">Fermer</button>`;
+
+  document.getElementById('map-content').innerHTML = html;
+  document.getElementById('ov-map').classList.add('show');
+}
+function mapShowStand(standId) {
+  const arts = findArtistsForStand(standId);
+  const info = document.getElementById('map-info');
+  if (!arts.length) {
+    info.innerHTML = `<strong>Stand ${standId}</strong> — vide`;
+  } else if (arts.length === 1) {
+    const a = arts[0];
+    info.innerHTML = `<strong>Stand ${standId}</strong><br><span style="color:var(--text);font-weight:600">${a.fav?'⭐ ':''}${a.name}</span> — ${a.style||'—'}<br><button class="btn-sm accent" style="margin-top:6px" onclick="closeAll();setTimeout(()=>openDetail('${a.id}'),300)">Ouvrir la fiche</button>`;
+  } else {
+    info.innerHTML = `<strong>Stand ${standId}</strong> — ${arts.length} artistes :<br>` + arts.map(a => `<span style="color:var(--text);font-weight:600">${a.fav?'⭐ ':''}${a.name}</span>`).join(' · ');
+  }
+}
+
+// ─── SHARE ──────────────────────────────────────────────
+function openShare(id) {
+  const a = data.artists.find(x => x.id === id); if (!a) return;
+  closeAll();
+  setTimeout(() => {
+    const av = a.photo ? `<div class="share-card-avatar"><img src="${a.photo}" alt=""></div>` : `<div class="share-card-avatar">${initials(a.name)}</div>`;
+    const html = `<div class="handle"></div>
+      <h2>📤 Partager cette fiche</h2>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Aperçu de la carte à partager :</p>
+      <div class="share-preview-wrap" id="share-preview">
+        <div class="share-card" id="share-card-render">
+          <div class="share-card-brand">🖋 Ink Factory 2026</div>
+          ${av}
+          <div class="share-card-name">${a.name}</div>
+          ${a.shop ? `<div class="share-card-shop">${a.shop}</div>` : ''}
+          <div class="share-card-badges">
+            ${a.style ? `<span class="share-card-badge">${a.style}</span>` : ''}
+            ${a.nat ? `<span class="share-card-badge">🌍 ${a.nat}</span>` : ''}
+            ${a.loc ? `<span class="share-card-badge">📍 ${a.loc}</span>` : ''}
+          </div>
+          ${a.insta ? `<div style="font-size:11px;color:#888;margin-top:6px">${a.insta}</div>` : ''}
+          <div class="share-card-foot">Lyon · 18-19-20 Sept 2026</div>
+        </div>
+      </div>
+      <div class="row-btns">
+        <button class="btn-cancel" onclick="closeAll()">Annuler</button>
+        <button class="btn-save" onclick="doShare('${id}')">📤 Partager</button>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;line-height:1.5">L'API de partage iOS ouvrira le menu standard : Messages, Mail, Instagram, AirDrop…</p>`;
+    document.getElementById('share-content').innerHTML = html;
+    document.getElementById('ov-share').classList.add('show');
+  }, 320);
+}
+async function doShare(id) {
+  const a = data.artists.find(x => x.id === id); if (!a) return;
+  // Render share card to canvas via SVG foreignObject trick
+  const card = document.getElementById('share-card-render');
+  const rect = card.getBoundingClientRect();
+  try {
+    const dataUrl = await renderCardToImage(card, rect.width, rect.height);
+    const blob = await (await fetch(dataUrl)).blob();
+    const file = new File([blob], `inkfactory-${a.name.replace(/\s+/g,'-')}.png`, {type:'image/png'});
+    if (navigator.canShare && navigator.canShare({files:[file]})) {
+      await navigator.share({ files:[file], title: a.name, text: `${a.name} – Ink Factory 2026` });
+      toast('✓ Partagé');
+    } else if (navigator.share) {
+      await navigator.share({ title: a.name, text: `${a.name} – Ink Factory 2026${a.insta?' '+a.insta:''}` });
+      toast('✓ Partagé (texte)');
+    } else {
+      // Fallback : télécharger l'image
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `inkfactory-${a.name.replace(/\s+/g,'-')}.png`;
+      link.click();
+      toast('✓ Image téléchargée');
+    }
+  } catch(e) {
+    console.error(e);
+    toast('❌ Partage impossible');
+  }
+}
+async function renderCardToImage(node, width, height) {
+  // Sérialise l'élément HTML en SVG puis en image
+  const clone = node.cloneNode(true);
+  // Inline images
+  const imgs = clone.querySelectorAll('img');
+  for (const img of imgs) {
+    if (img.src.startsWith('data:')) continue;
+    try {
+      const res = await fetch(img.src);
+      const blob = await res.blob();
+      const dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); });
+      img.src = dataUrl;
+    } catch(e){}
+  }
+  // Inline all styles
+  const styles = window.getComputedStyle(node);
+  const inlineStyle = Array.from(styles).map(p => `${p}:${styles.getPropertyValue(p)}`).join(';');
+  clone.setAttribute('style', inlineStyle);
+  const xml = new XMLSerializer().serializeToString(clone);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width*2}" height="${height*2}" viewBox="0 0 ${width} ${height}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">${xml}</div></foreignObject></svg>`;
+  const blob = new Blob([svg], {type:'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = width * 2;
+      canvas.height = height * 2;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
 function rippleAndOpen(el, e, id) {
   const rect = el.getBoundingClientRect();
   const size = Math.max(rect.width, rect.height);
@@ -1063,7 +1465,7 @@ function openAdd() {
   document.getElementById('ov-add').classList.add('show');
 }
 function closeAll() {
-  ['ov-add','ov-detail','ov-import','ov-backup'].forEach(id => document.getElementById(id).classList.remove('show'));
+  ['ov-add','ov-detail','ov-import','ov-backup','ov-stats','ov-map','ov-share','ov-history'].forEach(id => document.getElementById(id).classList.remove('show'));
   document.getElementById('fab').classList.remove('open');
   document.getElementById('xl-file').value = '';
   document.getElementById('import-info').style.display = 'none';
@@ -1112,8 +1514,8 @@ async function saveEntry() {
       photo:document.getElementById('f-photo').value || '',
       avail:{...formAvail}, tags:[...formTags],
       fav: existing ? existing.fav : false };
-    if (editId) data.artists = data.artists.map(x => x.id===editId ? e : x);
-    else { data.artists.push(e); tab='artists'; popCnt('cnt-a'); }
+    if (editId) { data.artists = data.artists.map(x => x.id===editId ? e : x); logHistory('Modifié', name, 'artist'); }
+    else { data.artists.push(e); tab='artists'; popCnt('cnt-a'); logHistory('Créé', name, 'artist'); }
   } else if (formType === 'shop') {
     const name = document.getElementById('s-name').value.trim();
     if (!name) { toast('Le nom est obligatoire'); return; }
@@ -1126,8 +1528,8 @@ async function saveEntry() {
       notes:document.getElementById('s-notes').value.trim(),
       photo:document.getElementById('s-photo').value || '',
       fav: existing ? existing.fav : false };
-    if (editId) data.shops = data.shops.map(x => x.id===editId ? e : x);
-    else { data.shops.push(e); tab='shops'; popCnt('cnt-s'); }
+    if (editId) { data.shops = data.shops.map(x => x.id===editId ? e : x); logHistory('Modifié', name, 'shop'); }
+    else { data.shops.push(e); tab='shops'; popCnt('cnt-s'); logHistory('Créé', name, 'shop'); }
   } else {
     const title = document.getElementById('e-title').value.trim();
     if (!title) { toast('Le titre est obligatoire'); return; }
@@ -1140,8 +1542,8 @@ async function saveEntry() {
       artist:document.getElementById('e-artist').value.trim(),
       notes:document.getElementById('e-notes').value.trim(),
       reminders:[...remRows] };
-    if (editId) data.events = data.events.map(x => x.id===editId ? e : x);
-    else { data.events.push(e); tab='events'; popCnt('cnt-e'); }
+    if (editId) { data.events = data.events.map(x => x.id===editId ? e : x); logHistory('Modifié', title, 'event'); }
+    else { data.events.push(e); tab='events'; popCnt('cnt-e'); logHistory('Créé', title, 'event'); }
   }
   saveData(); rescheduleAll(); closeAll(); render();
   toast('✓ Enregistré');
@@ -1194,6 +1596,7 @@ function openDetail(id) {
 
   if (x.type === 'artist') {
     html += `<button class="btn-full btn-present" onclick="openPresent('${id}')">🎤 Mode présentation</button>`;
+    html += `<button class="btn-full" style="background:var(--teal-l);color:var(--teal-d);border:0.5px solid var(--teal-d)" onclick="openShare('${id}')">📤 Partager la fiche</button>`;
   }
   html += `<button class="btn-full btn-edit" onclick="editEntry('${id}')">✏️ Modifier</button>
     <button class="btn-full btn-del" onclick="animateRemove('${id}')">🗑 Supprimer</button>
@@ -1243,6 +1646,9 @@ function editEntry(id) {
 }
 function animateRemove(id) { if(!confirm('Supprimer cette fiche ?'))return; closeAll(); deleteEntry(id); }
 function deleteEntry(id) {
+  const all = [...data.artists, ...data.shops, ...data.events];
+  const x = all.find(a => a.id === id);
+  if (x) logHistory('Supprimé', x.name || x.title || '?', x.type);
   data.artists = data.artists.filter(x => x.id !== id);
   data.shops = data.shops.filter(x => x.id !== id);
   data.events = data.events.filter(x => x.id !== id);
