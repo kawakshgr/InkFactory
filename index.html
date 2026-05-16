@@ -309,11 +309,11 @@ body.irezumi .title-text{background:linear-gradient(135deg,#8B6914 0%,#6b4e0a 10
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* MODE PRÉSENTATION PLEIN ÉCRAN */
-#present-overlay{display:none;position:fixed;inset:0;z-index:400;background:#000;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+#present-overlay{display:none;position:fixed;inset:0;z-index:400;background:#000;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;overflow:hidden}
 #present-overlay.show{display:flex}
 .present-bg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(40px) brightness(0.35) saturate(1.2);transform:scale(1.15);z-index:0}
 .present-bg-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.85) 100%);z-index:0}
-.present-inner{position:relative;z-index:2;width:100%;max-width:500px;padding:env(safe-area-inset-top,20px) 20px 20px;display:flex;flex-direction:column;align-items:center}
+.present-inner{position:relative;z-index:2;width:100%;max-width:500px;padding:calc(env(safe-area-inset-top,20px) + 60px) 20px calc(env(safe-area-inset-bottom,0px) + 20px);display:flex;flex-direction:column;align-items:center;overflow-y:auto;max-height:100vh}
 .present-close{position:absolute;top:calc(env(safe-area-inset-top,20px) + 8px);right:16px;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.15);color:#fff;padding:8px 14px;font-size:13px;border-radius:var(--r);cursor:pointer;z-index:10}
 .present-photo{width:min(70vw,260px);aspect-ratio:1/1;border-radius:18px;background:var(--purple-l);color:var(--purple-d);display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;margin-bottom:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.08)}
 .present-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -321,6 +321,17 @@ body.irezumi .title-text{background:linear-gradient(135deg,#8B6914 0%,#6b4e0a 10
 .present-pron{font-size:clamp(15px,4vw,19px);color:var(--gold-d);font-style:italic;margin-bottom:10px;text-shadow:0 2px 8px rgba(0,0,0,0.7)}
 .present-meta{font-size:clamp(13px,3.5vw,16px);color:rgba(255,255,255,0.75);margin-bottom:20px;text-shadow:0 2px 8px rgba(0,0,0,0.7)}
 .present-pres{font-size:clamp(15px,4vw,18px);line-height:1.55;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.1);border-radius:var(--rl);padding:18px 20px;max-width:600px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
+.present-section{margin-top:14px;width:100%;max-width:600px}
+.present-section-label{font-size:11px;color:var(--gold-d);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,0.6)}
+.present-badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.present-badge{font-size:13px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-weight:500;border:0.5px solid rgba(255,255,255,0.15);text-shadow:0 1px 3px rgba(0,0,0,0.5)}
+.present-badge.gold{background:rgba(201,154,46,0.18);color:var(--gold-d);border-color:rgba(201,154,46,0.4)}
+.present-badge.green{background:rgba(168,224,99,0.15);color:#A8E063;border-color:rgba(168,224,99,0.3)}
+.present-fav-star{display:inline-block;color:var(--gold-d);font-size:0.85em;margin-left:6px;text-shadow:0 2px 8px rgba(201,154,46,0.6)}
+.present-shop{font-size:clamp(14px,3.5vw,17px);color:rgba(255,255,255,0.7);font-style:italic;margin-bottom:14px;text-shadow:0 1px 4px rgba(0,0,0,0.6)}
+.present-insta{font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px;text-shadow:0 1px 4px rgba(0,0,0,0.6)}
+.present-notes{font-size:13px;line-height:1.5;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.08);border-radius:var(--r);padding:12px 14px;margin-top:12px;max-width:600px;text-align:left}
+.present-notes-label{font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 
 /* TODAY DASHBOARD - placeholder for next lot */
 
@@ -1652,23 +1663,68 @@ function openPresent(id) {
   const photo = a.photo
     ? `<div class="present-photo"><img src="${a.photo}" alt=""></div>`
     : `<div class="present-photo">${initials(a.name)}</div>`;
-  const meta = [a.style, a.nat, a.loc].filter(Boolean).join(' · ');
 
   // Blurred background: use photo if available, else a dark gradient
   const bg = document.getElementById('present-bg');
   if (a.photo) {
-    bg.style.backgroundImage = `url("${a.photo}")`;
     bg.style.background = `url("${a.photo}") center/cover no-repeat`;
   } else {
     bg.style.background = `radial-gradient(circle at 30% 20%, var(--purple-l) 0%, #000 70%)`;
   }
 
-  document.getElementById('present-content').innerHTML = `
-    ${photo}
-    <div class="present-name">${a.name}</div>
-    ${a.pron ? `<div class="present-pron">🗣 ${a.pron}</div>` : ''}
-    ${meta ? `<div class="present-meta">${meta}</div>` : ''}
-    ${a.pres ? `<div class="present-pres">${a.pres}</div>` : '<div style="color:rgba(255,255,255,0.6);font-style:italic">Pas de pitch de présentation enregistré</div>'}`;
+  // Build content sections
+  let html = photo;
+  html += `<div class="present-name">${a.name}${a.fav ? '<span class="present-fav-star">★</span>' : ''}</div>`;
+  if (a.pron) html += `<div class="present-pron">🗣 ${a.pron}</div>`;
+  if (a.shop) html += `<div class="present-shop">${a.shop}</div>`;
+
+  // Main info badges (style / nationality / location)
+  const mainBadges = [];
+  if (a.style) mainBadges.push(`<span class="present-badge">${a.style}</span>`);
+  if (a.nat) mainBadges.push(`<span class="present-badge">🌍 ${a.nat}</span>`);
+  if (a.loc) mainBadges.push(`<span class="present-badge">📍 ${a.loc}</span>`);
+  if (mainBadges.length) {
+    html += `<div class="present-section"><div class="present-badges">${mainBadges.join('')}</div></div>`;
+  }
+
+  // Pitch de présentation (cœur du mode présentation)
+  if (a.pres) {
+    html += `<div class="present-pres" style="margin-top:18px">${a.pres}</div>`;
+  } else {
+    html += `<div class="present-pres" style="margin-top:18px;color:rgba(255,255,255,0.5);font-style:italic;font-size:14px">Pas de pitch de présentation enregistré pour cet artiste</div>`;
+  }
+
+  // Disponibilités
+  const avail = availSummary(a.avail);
+  if (avail.length) {
+    html += `<div class="present-section">
+      <div class="present-section-label">⏱ Disponibilités</div>
+      <div class="present-badges">${avail.map(s => `<span class="present-badge green">${s}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  // Tags
+  if ((a.tags || []).length) {
+    html += `<div class="present-section">
+      <div class="present-section-label">🏷 Tags</div>
+      <div class="present-badges">${a.tags.map(t => `<span class="present-badge gold">${t}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  // Instagram (utile pour annoncer au micro)
+  if (a.insta) {
+    html += `<div class="present-insta">📱 ${a.insta}</div>`;
+  }
+
+  // Notes (en dernier, plus discret)
+  if (a.notes) {
+    html += `<div class="present-notes">
+      <div class="present-notes-label">📝 Notes</div>
+      ${a.notes}
+    </div>`;
+  }
+
+  document.getElementById('present-content').innerHTML = html;
   document.getElementById('present-overlay').classList.add('show');
   // Request wake lock to keep screen on
   try { if ('wakeLock' in navigator) navigator.wakeLock.request('screen'); } catch(e){}
