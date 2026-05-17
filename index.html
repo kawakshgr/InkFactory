@@ -601,12 +601,27 @@ body.irezumi .title-text{background:linear-gradient(135deg,#8B6914 0%,#6b4e0a 10
           <button class="btn-photo" id="s-del" style="display:none;color:var(--red)" onclick="clearPhoto('s')">✕ Retirer</button>
         </div>
       </div>
-      <span class="lbl">Nom du stand *</span><input id="s-name" placeholder="ex : Dark Ink Studio">
-      <span class="lbl">Ville / Pays</span><input id="s-city" placeholder="ex : Paris, France">
+      <span class="lbl">Nom du stand *</span><input id="s-name" placeholder="ex : Black Coffee, Skull Print Co...">
+      <span class="lbl">Catégorie</span>
+      <select id="s-cat">
+        <option value="">— Choisir —</option>
+        <option value="🍔 Food / Boissons">🍔 Food / Boissons</option>
+        <option value="👕 Vêtements">👕 Vêtements</option>
+        <option value="🖼 Prints / Art">🖼 Prints / Art</option>
+        <option value="💍 Bijoux">💍 Bijoux</option>
+        <option value="🎁 Goodies / Accessoires">🎁 Goodies / Accessoires</option>
+        <option value="🖋 Matériel tattoo">🖋 Matériel tattoo</option>
+        <option value="📚 Livres / Magazines">📚 Livres / Magazines</option>
+        <option value="🎵 Musique / Vinyles">🎵 Musique / Vinyles</option>
+        <option value="🤝 Partenaire / Sponsor">🤝 Partenaire / Sponsor</option>
+        <option value="🗓 Autre">🗓 Autre</option>
+      </select>
+      <span class="lbl">Produits proposés</span><input id="s-spec" placeholder="ex : T-shirts, sweats, casquettes">
       <span class="lbl">Emplacement</span><input id="s-loc" placeholder="ex : Hall B – Stand 5">
-      <span class="lbl">Spécialités</span><input id="s-spec" placeholder="ex : Blackwork, Néo-Trad…">
-      <span class="lbl">Site / Instagram</span><input id="s-contact" placeholder="ex : @stand_officiel">
-      <span class="lbl">Notes</span><textarea id="s-notes" placeholder="Produits, infos…"></textarea>
+      <span class="lbl">Ville d'origine</span><input id="s-city" placeholder="ex : Lyon, France">
+      <span class="lbl">Gamme de prix</span><input id="s-price" placeholder="ex : 5€ – 80€">
+      <span class="lbl">Site / Instagram</span><input id="s-contact" placeholder="ex : @leur_compte">
+      <span class="lbl">Notes</span><textarea id="s-notes" placeholder="Spécialités, infos pratiques, partenariats…"></textarea>
     </div>
 
     <div id="event-fields" style="display:none">
@@ -1006,8 +1021,10 @@ function render() {
       ${star}
       <div class="card-head">${av}<div><div class="card-name">${x.name||'—'}</div><div class="card-sub">${x.city||''}</div></div></div>
       <div class="badges">
-        ${x.spec ? `<span class="badge b-purple">${x.spec}</span>` : ''}
+        ${x.cat ? `<span class="badge b-purple">${x.cat}</span>` : ''}
+        ${x.spec ? `<span class="badge b-teal">${x.spec}</span>` : ''}
         ${x.loc ? `<span class="badge b-amber">📍 ${x.loc}</span>` : ''}
+        ${x.price ? `<span class="badge b-green">💰 ${x.price}</span>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1485,7 +1502,7 @@ function setFT(t) {
 }
 function clearForm() {
   ['f-name','f-style','f-nat','f-loc','f-shop','f-insta','f-notes','f-pres','f-pron',
-   's-name','s-city','s-loc','s-spec','s-contact','s-notes',
+   's-name','s-city','s-loc','s-spec','s-contact','s-notes','s-cat','s-price',
    'e-title','e-loc','e-artist','e-notes','e-start','e-end'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
@@ -1524,9 +1541,11 @@ async function saveEntry() {
     if (!name) { toast('Le nom est obligatoire'); return; }
     const existing = editId ? data.shops.find(s => s.id === editId) : null;
     const e = { id, type:'shop', name,
+      cat:document.getElementById('s-cat').value,
       city:document.getElementById('s-city').value.trim(),
       loc:document.getElementById('s-loc').value.trim(),
       spec:document.getElementById('s-spec').value.trim(),
+      price:document.getElementById('s-price').value.trim(),
       contact:document.getElementById('s-contact').value.trim(),
       notes:document.getElementById('s-notes').value.trim(),
       photo:document.getElementById('s-photo').value || '',
@@ -1585,7 +1604,7 @@ function openDetail(id) {
     }
     const fields = x.type==='artist'
       ? [['Style',x.style],['Nationalité',x.nat],['Emplacement',x.loc],['Boutique',x.shop],['Instagram',x.insta],['Notes',x.notes]]
-      : [['Ville',x.city],['Emplacement',x.loc],['Spécialités',x.spec],['Contact',x.contact],['Notes',x.notes]];
+      : [['Catégorie',x.cat],['Produits',x.spec],['Gamme de prix',x.price],['Emplacement',x.loc],['Ville',x.city],['Contact',x.contact],['Notes',x.notes]];
     html += fields.filter(([,v])=>v).map(([k,v],i)=>`<div class="dm-field" style="animation-delay:${i*0.05}s"><span class="dm-key">${k}</span><span class="dm-val">${v}</span></div>`).join('');
     if (x.type === 'artist') {
       if (availSummary(x.avail).length) {
@@ -1625,9 +1644,10 @@ function editEntry(id) {
       document.getElementById('f-del').style.display='block';
     }
   } else if (x.type === 'shop') {
-    ['name','city','loc','spec','contact','notes'].forEach(k => {
+    ['name','city','loc','spec','contact','notes','price'].forEach(k => {
       const el = document.getElementById('s-'+k); if (el) el.value = x[k]||'';
     });
+    document.getElementById('s-cat').value = x.cat || '';
     if (x.photo) {
       const p = document.getElementById('s-prev'); p.src=x.photo; p.style.display='block';
       document.getElementById('s-ph').style.display='none';
@@ -1740,7 +1760,7 @@ function setIT(t) {
 }
 const COLS = {
   artist:['Nom','Style','Nationalité','Emplacement','Boutique','Instagram','Notes'],
-  shop:['Nom','Ville','Emplacement','Spécialités','Contact','Notes'],
+  shop:['Nom','Catégorie','Produits','Gamme de prix','Emplacement','Ville','Contact','Notes'],
   event:['Titre','Catégorie','Début (AAAA-MM-JJThh:mm)','Fin (AAAA-MM-JJThh:mm)','Lieu','Artiste','Notes'],
 };
 function dlTemplate() {
@@ -1789,7 +1809,7 @@ function doImport() {
       data.artists.push({id,type:'artist',name,style:get('Style'),nat:get('Nationalité'),loc:get('Emplacement'),shop:get('Boutique'),insta:get('Instagram'),notes:get('Notes'),photo:'',avail:{},tags:[],pres:'',pron:'',fav:false});
     } else if (importType === 'shop') {
       const name = get('Nom'); if (!name) return;
-      data.shops.push({id,type:'shop',name,city:get('Ville'),loc:get('Emplacement'),spec:get('Spécialités'),contact:get('Contact'),notes:get('Notes'),photo:'',fav:false});
+      data.shops.push({id,type:'shop',name,cat:get('Catégorie'),city:get('Ville'),loc:get('Emplacement'),spec:get('Produits')||get('Spécialités'),price:get('Gamme de prix')||get('Prix'),contact:get('Contact'),notes:get('Notes'),photo:'',fav:false});
     } else {
       const title = get('Titre'); if (!title) return;
       data.events.push({id,type:'event',title,cat:get('Catégorie'),start:get('Début'),end:get('Fin'),loc:get('Lieu'),artist:get('Artiste'),notes:get('Notes'),reminders:[]});
